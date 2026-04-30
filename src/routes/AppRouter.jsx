@@ -12,6 +12,7 @@ import { Autores } from '../pages/catalogo/Autores';
 import { Editoriales } from '../pages/catalogo/Editoriales';
 import { Categorias } from '../pages/catalogo/Categorias';
 import { MisPrestamos } from '../pages/prestamos/MisPrestamos';
+import { AdminPrestamos } from '../pages/prestamos/AdminPrestamos';
 import { ReportesDashboard } from '../pages/reportes/ReportesDashboard';
 
 export const AppRouter = () => {
@@ -35,6 +36,7 @@ export const AppRouter = () => {
             <Route path="/prestamos" element={<MisPrestamos />} />
             
             <Route element={<AdminRoute />}>
+              <Route path="/prestamos/admin" element={<AdminPrestamos />} />
               <Route path="/reportes" element={<ReportesDashboard />} />
             </Route>
           </Route>

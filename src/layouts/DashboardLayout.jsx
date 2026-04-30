@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Book, LayoutDashboard, LogOut, FileText, Bookmark, Menu, X, ChevronRight, Library } from 'lucide-react';
+import { Book, LayoutDashboard, LogOut, FileText, Bookmark, Menu, X, ChevronRight, Library, Users } from 'lucide-react';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuth();
@@ -18,7 +18,10 @@ export const DashboardLayout = () => {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Catálogo', path: '/catalogo', icon: Book },
     { name: 'Préstamos', path: '/prestamos', icon: Bookmark },
-    ...(user?.rol === 'admin' ? [{ name: 'Reportes', path: '/reportes', icon: FileText }] : []),
+    ...(user?.rol === 'admin' ? [
+      { name: 'Gestión Préstamos', path: '/prestamos/admin', icon: Users },
+      { name: 'Reportes', path: '/reportes', icon: FileText },
+    ] : []),
   ];
 
   const closeSidebar = () => setSidebarOpen(false);

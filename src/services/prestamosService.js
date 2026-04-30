@@ -11,5 +11,16 @@ export const prestamosService = {
   
   returnPrestamo: async (id) => {
     return await apiLoans.post(`/prestamos/${id}/devolucion`);
-  }
+  },
+
+  getAllPrestamos: async (params = {}) => {
+    return await apiLoans.get('/prestamos/admin/todos', { params });
+  },
+
+  returnPrestamoAdmin: async (prestamoId, forzar = false) => {
+    return await apiLoans.post('/prestamos/admin/devolver', {
+      prestamo_id: prestamoId,
+      forzar,
+    });
+  },
 };
