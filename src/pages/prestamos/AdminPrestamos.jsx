@@ -19,7 +19,7 @@ export const AdminPrestamos = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   // Filters
-  const [estadoFilter, setEstadoFilter] = useState('todos');
+  const [estadoFilter, setEstadoFilter] = useState('');
   const [tituloFilter, setTituloFilter] = useState('');
   const [searchInput, setSearchInput] = useState('');
 
@@ -27,12 +27,13 @@ export const AdminPrestamos = () => {
     try {
       setLoading(true);
       setError(null);
-      const params = { page, limit, estado: estadoFilter };
+      const params = { page, limit };
+      if (estadoFilter) params.estado = estadoFilter;
       if (searchInput.trim()) params.libro_titulo = searchInput.trim();
 
       const response = await prestamosService.getAllPrestamos(params);
-      if (response.data?.success) {
-        const data = response.data.data;
+      if (response?.success) {
+        const data = response.data;
         setPrestamos(data.items || []);
         setTotalItems(data.pagination?.total_items || 0);
         setTotalPages(data.pagination?.total_pages || 0);
@@ -102,14 +103,14 @@ export const AdminPrestamos = () => {
   };
 
   const clearFilters = () => {
-    setEstadoFilter('todos');
+    setEstadoFilter('');
     setSearchInput('');
     setTituloFilter('');
     setPage(1);
     fetchPrestamos();
   };
 
-  const hasActiveFilters = estadoFilter !== 'todos' || searchInput !== '';
+  const hasActiveFilters = estadoFilter !== '' || searchInput !== '';
   const activos = prestamos.filter(p => p.estado === 'activo');
   const devueltos = prestamos.filter(p => p.estado === 'devuelto');
 
@@ -139,7 +140,7 @@ export const AdminPrestamos = () => {
               onChange={(e) => { setEstadoFilter(e.target.value); setPage(1); }}
               className="select w-full"
             >
-              <option value="todos">Todos</option>
+              <option value="">Todos</option>
               <option value="activo">Activos</option>
               <option value="devuelto">Devueltos</option>
             </select>
