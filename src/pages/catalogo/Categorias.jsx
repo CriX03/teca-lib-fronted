@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Tag } from 'lucide-react';
 import { catalogoService } from '../../services/catalogoService';
 import { useAuth } from '../../hooks/useAuth';
-import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
+import { TableSkeleton, EmptyState, ErrorMessage, EntityModal } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
 
@@ -14,6 +14,10 @@ export const Categorias = () => {
   const confirm = useConfirm();
   const { user } = useAuth();
   const isAdmin = user?.rol === 'admin';
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingCategoria, setEditingCategoria] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const fetchCategorias = async () => {
     try {
@@ -32,28 +36,27 @@ export const Categorias = () => {
     fetchCategorias();
   }, []);
 
-  const handleCreate = async () => {
-    const nombre = window.prompt('Nombre de la nueva categoría:');
-    if (!nombre) return;
-    try {
-      await catalogoService.createCategoria({ nombre });
-      notify.success('Categoría creada exitosamente');
-      fetchCategorias();
-    } catch (err) {
-      notify.error('Error al crear categoría');
-    }
+  const handleOpenCreate = () => {
+    setEditingCategoria(null);
+    setModalOpen(true);
   };
 
-  const handleEdit = async (categoria) => {
-    const nombre = window.prompt('Editar nombre de la categoría:', categoria.nombre);
-    if (!nombre || nombre === categoria.nombre) return;
-    try {
-      await catalogoService.updateCategoria(categoria.id, { nombre });
+  const handleOpenEdit = (categoria) => {
+    setEditingCategoria(categoria);
+    setModalOpen(true);
+  };
+
+  const handleSubmit = async (nombre) => {
+    setSaving(true);
+    if (editingCategoria) {
+      await catalogoService.updateCategoria(editingCategoria.id, { nombre });
       notify.success('Categoría actualizada exitosamente');
-      fetchCategorias();
-    } catch (err) {
-      notify.error('Error al actualizar categoría');
+    } else {
+      await catalogoService.createCategoria({ nombre });
+      notify.success('Categoría creada exitosamente');
     }
+    fetchCategorias();
+    setSaving(false);
   };
 
   const handleDelete = async (categoria) => {
@@ -91,7 +94,7 @@ export const Categorias = () => {
           </div>
         </div>
         {isAdmin && (
-          <button onClick={handleCreate} className="btn btn-primary">
+          <button onClick={handleOpenCreate} className="btn btn-primary">
             <Plus size={16} /> Crear Categoría
           </button>
         )}
@@ -122,7 +125,7 @@ export const Categorias = () => {
                     icon={Tag}
                     action={
                       isAdmin && (
-                        <button onClick={handleCreate} className="btn btn-primary">
+                        <button onClick={handleOpenCreate} className="btn btn-primary">
                           <Plus size={16} /> Crear primera categoría
                         </button>
                       )
@@ -138,7 +141,7 @@ export const Categorias = () => {
                     <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                       {isAdmin && (
                         <>
-                          <button onClick={() => handleEdit(categoria)} className="btn-ghost p-2 rounded-lg" title="Editar">
+                          <button onClick={() => handleOpenEdit(categoria)} className="btn-ghost p-2 rounded-lg" title="Editar">
                             <Edit size={16} className="text-blue-600" />
                           </button>
                           <button onClick={() => handleDelete(categoria)} className="btn-ghost p-2 rounded-lg" title="Eliminar">
@@ -151,9 +154,18 @@ export const Categorias = () => {
                 </tr>
               ))
             )}
-          </tbody>
-        </table>
+</tbody>
+          </table>
+        </div>
+
+        <EntityModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleSubmit}
+          initialData={editingCategoria}
+          entityType="categoria"
+          loading={saving}
+        />
       </div>
-    </div>
-  );
-};
+    );
+  };

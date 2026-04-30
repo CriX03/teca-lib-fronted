@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { catalogoService } from '../../services/catalogoService';
 import { useAuth } from '../../hooks/useAuth';
-import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
+import { TableSkeleton, EmptyState, ErrorMessage, EntityModal } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
 
@@ -14,6 +14,10 @@ export const Editoriales = () => {
   const confirm = useConfirm();
   const { user } = useAuth();
   const isAdmin = user?.rol === 'admin';
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingEditorial, setEditingEditorial] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const fetchEditoriales = async () => {
     try {
@@ -32,28 +36,27 @@ export const Editoriales = () => {
     fetchEditoriales();
   }, []);
 
-  const handleCreate = async () => {
-    const nombre = window.prompt('Nombre de la nueva editorial:');
-    if (!nombre) return;
-    try {
-      await catalogoService.createEditorial({ nombre });
-      notify.success('Editorial creada exitosamente');
-      fetchEditoriales();
-    } catch (err) {
-      notify.error('Error al crear editorial');
-    }
+  const handleOpenCreate = () => {
+    setEditingEditorial(null);
+    setModalOpen(true);
   };
 
-  const handleEdit = async (editorial) => {
-    const nombre = window.prompt('Editar nombre de la editorial:', editorial.nombre);
-    if (!nombre || nombre === editorial.nombre) return;
-    try {
-      await catalogoService.updateEditorial(editorial.id, { nombre });
+  const handleOpenEdit = (editorial) => {
+    setEditingEditorial(editorial);
+    setModalOpen(true);
+  };
+
+  const handleSubmit = async (nombre) => {
+    setSaving(true);
+    if (editingEditorial) {
+      await catalogoService.updateEditorial(editingEditorial.id, { nombre });
       notify.success('Editorial actualizada exitosamente');
-      fetchEditoriales();
-    } catch (err) {
-      notify.error('Error al actualizar editorial');
+    } else {
+      await catalogoService.createEditorial({ nombre });
+      notify.success('Editorial creada exitosamente');
     }
+    fetchEditoriales();
+    setSaving(false);
   };
 
   const handleDelete = async (editorial) => {
@@ -91,7 +94,7 @@ export const Editoriales = () => {
           </div>
         </div>
         {isAdmin && (
-          <button onClick={handleCreate} className="btn btn-primary">
+          <button onClick={handleOpenCreate} className="btn btn-primary">
             <Plus size={16} /> Crear Editorial
           </button>
         )}
@@ -122,7 +125,7 @@ export const Editoriales = () => {
                     icon={Building2}
                     action={
                       isAdmin && (
-                        <button onClick={handleCreate} className="btn btn-primary">
+                        <button onClick={handleOpenCreate} className="btn btn-primary">
                           <Plus size={16} /> Crear primera editorial
                         </button>
                       )
@@ -138,7 +141,7 @@ export const Editoriales = () => {
                     <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                       {isAdmin && (
                         <>
-                          <button onClick={() => handleEdit(editorial)} className="btn-ghost p-2 rounded-lg" title="Editar">
+                          <button onClick={() => handleOpenEdit(editorial)} className="btn-ghost p-2 rounded-lg" title="Editar">
                             <Edit size={16} className="text-blue-600" />
                           </button>
                           <button onClick={() => handleDelete(editorial)} className="btn-ghost p-2 rounded-lg" title="Eliminar">
@@ -151,9 +154,18 @@ export const Editoriales = () => {
                 </tr>
               ))
             )}
-          </tbody>
-        </table>
+</tbody>
+          </table>
+        </div>
+
+        <EntityModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleSubmit}
+          initialData={editingEditorial}
+          entityType="editorial"
+          loading={saving}
+        />
       </div>
-    </div>
-  );
-};
+    );
+  };

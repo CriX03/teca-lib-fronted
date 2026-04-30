@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Users } from 'lucide-react';
 import { catalogoService } from '../../services/catalogoService';
 import { useAuth } from '../../hooks/useAuth';
-import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
+import { TableSkeleton, EmptyState, ErrorMessage, EntityModal } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
 
@@ -14,6 +14,10 @@ export const Autores = () => {
   const confirm = useConfirm();
   const { user } = useAuth();
   const isAdmin = user?.rol === 'admin';
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingAutor, setEditingAutor] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const fetchAutores = async () => {
     try {
@@ -32,28 +36,27 @@ export const Autores = () => {
     fetchAutores();
   }, []);
 
-  const handleCreate = async () => {
-    const nombre = window.prompt('Nombre del nuevo autor:');
-    if (!nombre) return;
-    try {
-      await catalogoService.createAutor({ nombre });
-      notify.success('Autor creado exitosamente');
-      fetchAutores();
-    } catch (err) {
-      notify.error('Error al crear autor');
-    }
+  const handleOpenCreate = () => {
+    setEditingAutor(null);
+    setModalOpen(true);
   };
 
-  const handleEdit = async (autor) => {
-    const nombre = window.prompt('Editar nombre del autor:', autor.nombre);
-    if (!nombre || nombre === autor.nombre) return;
-    try {
-      await catalogoService.updateAutor(autor.id, { nombre });
+  const handleOpenEdit = (autor) => {
+    setEditingAutor(autor);
+    setModalOpen(true);
+  };
+
+  const handleSubmit = async (nombre) => {
+    setSaving(true);
+    if (editingAutor) {
+      await catalogoService.updateAutor(editingAutor.id, { nombre });
       notify.success('Autor actualizado exitosamente');
-      fetchAutores();
-    } catch (err) {
-      notify.error('Error al actualizar autor');
+    } else {
+      await catalogoService.createAutor({ nombre });
+      notify.success('Autor creado exitosamente');
     }
+    fetchAutores();
+    setSaving(false);
   };
 
   const handleDelete = async (autor) => {
@@ -91,7 +94,7 @@ export const Autores = () => {
           </div>
         </div>
         {isAdmin && (
-          <button onClick={handleCreate} className="btn btn-primary">
+          <button onClick={handleOpenCreate} className="btn btn-primary">
             <Plus size={16} /> Crear Autor
           </button>
         )}
@@ -122,7 +125,7 @@ export const Autores = () => {
                     iconType="users"
                     action={
                       isAdmin && (
-                        <button onClick={handleCreate} className="btn btn-primary">
+                        <button onClick={handleOpenCreate} className="btn btn-primary">
                           <Plus size={16} /> Crear primer autor
                         </button>
                       )
@@ -138,7 +141,7 @@ export const Autores = () => {
                     <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                       {isAdmin && (
                         <>
-                          <button onClick={() => handleEdit(autor)} className="btn-ghost p-2 rounded-lg" title="Editar">
+                          <button onClick={() => handleOpenEdit(autor)} className="btn-ghost p-2 rounded-lg" title="Editar">
                             <Edit size={16} className="text-blue-600" />
                           </button>
                           <button onClick={() => handleDelete(autor)} className="btn-ghost p-2 rounded-lg" title="Eliminar">
@@ -151,9 +154,18 @@ export const Autores = () => {
                 </tr>
               ))
             )}
-          </tbody>
-        </table>
+</tbody>
+          </table>
+        </div>
+
+        <EntityModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleSubmit}
+          initialData={editingAutor}
+          entityType="autor"
+          loading={saving}
+        />
       </div>
-    </div>
-  );
-};
+    );
+  };
