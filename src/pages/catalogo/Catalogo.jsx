@@ -90,23 +90,25 @@ export const Catalogo = () => {
           Catálogo de Libros
         </h1>
         
-        <div className="flex flex-wrap items-center gap-2">
-          <Link to="/catalogo/autores" className="btn btn-secondary text-xs sm:text-sm">
-            Autores
-          </Link>
-          <Link to="/catalogo/editoriales" className="btn btn-secondary text-xs sm:text-sm">
-            Editoriales
-          </Link>
-          <Link to="/catalogo/categorias" className="btn btn-secondary text-xs sm:text-sm">
-            Categorías
-          </Link>
-          {isAdmin && (
-            <Link to="/catalogo/nuevo" className="btn btn-primary text-xs sm:text-sm">
-              <Plus size={16} />
-              <span className="hidden sm:inline">Crear Libro</span>
-            </Link>
-          )}
-        </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {isAdmin && (
+              <>
+                <Link to="/catalogo/autores" className="btn btn-secondary text-xs sm:text-sm">
+                  Autores
+                </Link>
+                <Link to="/catalogo/editoriales" className="btn btn-secondary text-xs sm:text-sm">
+                  Editoriales
+                </Link>
+                <Link to="/catalogo/categorias" className="btn btn-secondary text-xs sm:text-sm">
+                  Categorías
+                </Link>
+                <Link to="/catalogo/nuevo" className="btn btn-primary text-xs sm:text-sm">
+                  <Plus size={16} />
+                  <span className="hidden sm:inline">Crear Libro</span>
+                </Link>
+              </>
+            )}
+          </div>
       </div>
 
       {/* Filters */}
