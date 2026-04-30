@@ -6,6 +6,10 @@ export const catalogoService = {
     return await apiCatalog.get('/catalogo/libros', { params });
   },
   
+  getLibroById: async (id) => {
+    return await apiCatalog.get(`/catalogo/libros/${id}`);
+  },
+  
   createLibro: async (libroData) => {
     return await apiCatalog.post('/catalogo/libros', libroData);
   },

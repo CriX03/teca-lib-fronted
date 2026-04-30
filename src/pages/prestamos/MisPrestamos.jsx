@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { BookOpen, Calendar, CheckCircle, AlertTriangle } from 'lucide-react';
 import { prestamosService } from '../../services/prestamosService';
+import { catalogoService } from '../../services/catalogoService';
 import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
@@ -23,7 +24,29 @@ export const MisPrestamos = () => {
       const response = await prestamosService.getMisPrestamos();
       if (response.data && response.data.success !== false) {
         const data = response.data.data || response.data;
-        setPrestamos(data.items || data.prestamos || data || []);
+        const prestamos = data.items || data.prestamos || data || [];
+
+        const libroIds = [...new Set(prestamos.map(p => p.libro_id).filter(Boolean))];
+
+        const libroTitles = {};
+        await Promise.all(
+          libroIds.map(async (id) => {
+            try {
+              const res = await catalogoService.getLibroById(id);
+              const libroData = res.data?.data || res.data;
+              libroTitles[id] = libroData?.titulo || `Libro #${id}`;
+            } catch {
+              libroTitles[id] = `Libro #${id}`;
+            }
+          })
+        );
+
+        const prestamosEnriquecidos = prestamos.map(p => ({
+          ...p,
+          titulo: libroTitles[p.libro_id] || `Libro #${p.libro_id}`,
+        }));
+
+        setPrestamos(prestamosEnriquecidos);
       }
     } catch (err) {
       setError('Error al cargar tus préstamos');
@@ -38,7 +61,7 @@ export const MisPrestamos = () => {
   }, []);
 
   const handleDevolucion = async (prestamo) => {
-    const titulo = prestamo.libro?.titulo || prestamo.titulo || `Libro #${prestamo.libro_id}`;
+    const titulo = prestamo.titulo || `Libro #${prestamo.libro_id}`;
     const confirmed = await confirm({
       title: '¿Confirmar devolución?',
       message: `Estás devolviendo "${titulo}". Se actualizará la disponibilidad del libro.`,
@@ -136,7 +159,7 @@ export const MisPrestamos = () => {
                 </tr>
               ) : (
                 activos.map((prestamo) => {
-                  const titulo = prestamo.libro?.titulo || prestamo.titulo || `Libro #${prestamo.libro_id}`;
+                  const titulo = prestamo.titulo || `Libro #${prestamo.libro_id}`;
                   const overdue = isOverdue(prestamo.fecha_limite);
 
                   return (
@@ -204,8 +227,8 @@ export const MisPrestamos = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {devueltos.map((prestamo) => {
-                  const titulo = prestamo.libro?.titulo || prestamo.titulo || `Libro #${prestamo.libro_id}`;
+                {                devueltos.map((prestamo) => {
+                  const titulo = prestamo.titulo || `Libro #${prestamo.libro_id}`;
                   return (
                     <tr key={prestamo.id} className="table-row-hover">
                       <td className="px-6 py-4">
