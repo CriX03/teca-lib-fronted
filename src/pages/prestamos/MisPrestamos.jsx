@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { BookOpen, Calendar, CheckCircle, AlertTriangle } from 'lucide-react';
 import { prestamosService } from '../../services/prestamosService';
 import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
+import { AuthContext } from '../../context/AuthContext';
 
 export const MisPrestamos = () => {
+  const { user } = useContext(AuthContext);
   const [prestamos, setPrestamos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [devolviendo, setDevolviendo] = useState(null);
   const confirm = useConfirm();
+
+  const isAdmin = user?.rol === 'admin';
 
   const fetchPrestamos = async () => {
     try {
@@ -110,19 +114,19 @@ export const MisPrestamos = () => {
                 <th className="px-6 py-3.5 font-semibold hidden sm:table-cell">F. Préstamo</th>
                 <th className="px-6 py-3.5 font-semibold hidden sm:table-cell">F. Límite</th>
                 <th className="px-6 py-3.5 font-semibold">Estado</th>
-                <th className="px-6 py-3.5 font-semibold text-right">Acciones</th>
+                {isAdmin && <th className="px-6 py-3.5 font-semibold text-right">Acciones</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="p-0">
-                    <TableSkeleton rows={3} cols={5} />
+                  <td colSpan={isAdmin ? 5 : 4} className="p-0">
+                    <TableSkeleton rows={3} cols={isAdmin ? 5 : 4} />
                   </td>
                 </tr>
               ) : activos.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-0">
+                  <td colSpan={isAdmin ? 5 : 4} className="p-0">
                     <EmptyState
                       title="Sin préstamos activos"
                       description="No tienes ningún libro prestado actualmente."
@@ -157,16 +161,18 @@ export const MisPrestamos = () => {
                           {overdue ? 'Vencido' : 'Activo'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => handleDevolucion(prestamo)}
-                          disabled={devolviendo === prestamo.id}
-                          className="btn btn-primary text-xs py-1.5 px-3"
-                        >
-                          <CheckCircle size={14} />
-                          {devolviendo === prestamo.id ? 'Procesando...' : 'Devolver'}
-                        </button>
-                      </td>
+                      {isAdmin && (
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={() => handleDevolucion(prestamo)}
+                            disabled={devolviendo === prestamo.id}
+                            className="btn btn-primary text-xs py-1.5 px-3"
+                          >
+                            <CheckCircle size={14} />
+                            {devolviendo === prestamo.id ? 'Procesando...' : 'Devolver'}
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   );
                 })
