@@ -93,9 +93,30 @@ export const Catalogo = () => {
     setLoadingDetalle(true);
     
     try {
-      const response = await catalogoService.getLibroById(libro.id);
-      const data = response.data;
-      setLibroDetalle(prev => ({ ...prev, ...data.data || data }));
+      const [libroRes, autoresRes, editorialesRes, categoriasRes] = await Promise.all([
+        catalogoService.getLibroById(libro.id),
+        catalogoService.getAutores(),
+        catalogoService.getEditoriales(),
+        catalogoService.getCategorias()
+      ]);
+      
+      const normalize = (res) => res.data?.items || res.data?.data || res.data || [];
+      const libroData = normalize(libroRes);
+      const autores = normalize(autoresRes);
+      const editoriales = normalize(editorialesRes);
+      const categorias = normalize(categoriasRes);
+      
+      const autor = autores.find(a => a.id === Number(libroData.autor_id) || a.id === livroData.autor_id);
+      const editorial = editoriales.find(e => e.id === Number(libroData.editorial_id) || e.id === livroData.editorial_id);
+      const categoria = categorias.find(c => c.id === Number(libroData.categoria_id) || c.id === livroData.categoria_id);
+      
+      setLibroDetalle(prev => ({
+        ...prev,
+        ...libroData,
+        autor_nombre: autor?.nombre || 'No especificado',
+        editorial_nombre: editorial?.nombre || 'No especificado',
+        categoria_nombre: categoria?.nombre || 'No especificado'
+      }));
     } catch (err) {
       notify.error('Error al cargar los detalles del libro');
       setIsDetalleModalOpen(false);
