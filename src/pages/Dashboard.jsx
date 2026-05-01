@@ -20,13 +20,13 @@ export const Dashboard = () => {
         ]);
 
         const librosData = librosRes.status === 'fulfilled' 
-          ? (librosRes.value.data?.total || librosRes.value.total || '—')
+          ? (librosRes.value?.data?.pagination?.total ?? '—')
           : '—';
         
         let activos = '—';
         let total = '—';
         if (prestamosRes.status === 'fulfilled') {
-          const prestamos = prestamosRes.value.data?.data || prestamosRes.value.data || prestamosRes.value || [];
+          const prestamos = prestamosRes.value?.data?.items || prestamosRes.value?.data || [];
           if (Array.isArray(prestamos)) {
             total = prestamos.length;
             activos = prestamos.filter(p => p.estado === 'activo').length;
