@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Search, Edit, Trash2, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, BookOpen, ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import { catalogoService } from '../../services/catalogoService';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useAuth } from '../../hooks/useAuth';
 import { PrestamoModal } from '../../components/prestamos/PrestamoModal';
+import { LibroDetalleModal } from '../../components/ui/LibroDetalleModal';
 import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
@@ -24,6 +25,11 @@ export const Catalogo = () => {
   // Prestamo Modal State
   const [isPrestamoModalOpen, setIsPrestamoModalOpen] = useState(false);
   const [libroSeleccionado, setLibroSeleccionado] = useState(null);
+  
+  // Detalle Modal State
+  const [isDetalleModalOpen, setIsDetalleModalOpen] = useState(false);
+  const [libroDetalle, setLibroDetalle] = useState(null);
+  const [loadingDetalle, setLoadingDetalle] = useState(false);
   
   const { user } = useAuth();
   const isAdmin = user?.rol === 'admin';
@@ -78,6 +84,23 @@ export const Catalogo = () => {
       } catch (err) {
         notify.error('Error al eliminar el libro');
       }
+    }
+  };
+
+  const handleVerDetalle = async (libro) => {
+    setLibroDetalle(libro);
+    setIsDetalleModalOpen(true);
+    setLoadingDetalle(true);
+    
+    try {
+      const response = await catalogoService.getLibroById(libro.id);
+      const data = response.data;
+      setLibroDetalle(prev => ({ ...prev, ...data.data || data }));
+    } catch (err) {
+      notify.error('Error al cargar los detalles del libro');
+      setIsDetalleModalOpen(false);
+    } finally {
+      setLoadingDetalle(false);
     }
   };
 
@@ -199,6 +222,13 @@ export const Catalogo = () => {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleVerDetalle(libro)}
+                          className="btn-ghost p-2 rounded-lg"
+                          title="Ver detalles"
+                        >
+                          <Info size={16} className="text-gray-600" />
+                        </button>
                         {libro.disponible !== false && libro.disponibilidad !== false && (
                           <button
                             onClick={() => {
@@ -295,6 +325,16 @@ export const Catalogo = () => {
           notify.success('¡Préstamo realizado exitosamente!');
           fetchLibros();
         }}
+      />
+
+      <LibroDetalleModal
+        isOpen={isDetalleModalOpen}
+        onClose={() => {
+          setIsDetalleModalOpen(false);
+          setLibroDetalle(null);
+        }}
+        libro={libroDetalle}
+        loading={loadingDetalle}
       />
     </div>
   );
