@@ -12,15 +12,16 @@ export const ReportesDashboard = () => {
   const [retrasos, setRetrasos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const limit = 10;
 
   const fetchReportes = async () => {
     setLoading(true);
     setError('');
     try {
       const [resLibros, resUsuarios, resRetrasos] = await Promise.all([
-        reportesService.getLibrosMasPrestados(),
-        reportesService.getPrestamosPorUsuario(),
-        reportesService.getRetrasos()
+        reportesService.getLibrosMasPrestados(limit),
+        reportesService.getPrestamosPorUsuario(limit),
+        reportesService.getRetrasos(limit)
       ]);
 
       if (resLibros.success) setLibrosMasPrestados(resLibros.data?.items || resLibros.data || []);
@@ -106,8 +107,8 @@ export const ReportesDashboard = () => {
           <div className="p-4">
             {librosMasPrestados.length === 0 ? (
               <EmptyState
-                title="Sin datos"
-                description="No hay datos suficientes de préstamos."
+                title="Sin datos aún"
+                description="El sistema sincroniza datos cada 5 minutos. Si acabas de iniciar, espera unos minutos e intenta refrescar."
                 iconType="books"
               />
             ) : (
@@ -146,8 +147,8 @@ export const ReportesDashboard = () => {
           <div className="p-4">
             {prestamosPorUsuario.length === 0 ? (
               <EmptyState
-                title="Sin datos"
-                description="No hay datos suficientes de usuarios."
+                title="Sin datos aún"
+                description="El sistema sincroniza datos cada 5 minutos. Intenta refrescar en unos minutos."
                 iconType="users"
               />
             ) : (

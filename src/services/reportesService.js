@@ -1,15 +1,15 @@
 import { apiReports } from '../api/axios';
 
 export const reportesService = {
-  getLibrosMasPrestados: async () => {
-    return await apiReports.get('/reportes/libros-mas-prestados');
+  getLibrosMasPrestados: async (limit = 10) => {
+    return await apiReports.get('/reportes/libros-mas-prestados', { params: { limit } });
   },
   
-  getPrestamosPorUsuario: async () => {
-    return await apiReports.get('/reportes/prestamos-por-usuario');
+  getPrestamosPorUsuario: async (limit = 10) => {
+    return await apiReports.get('/reportes/prestamos-por-usuario', { params: { limit } });
   },
   
-  getRetrasos: async () => {
-    return await apiReports.get('/reportes/retrasos');
+  getRetrasos: async (limit = 10) => {
+    return await apiReports.get('/reportes/retrasos', { params: { limit } });
   }
 };
