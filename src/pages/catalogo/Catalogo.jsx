@@ -87,36 +87,21 @@ export const Catalogo = () => {
     }
   };
 
-  const handleVerDetalle = async (libro) => {
+const handleVerDetalle = async (libro) => {
     setLibroDetalle(libro);
     setIsDetalleModalOpen(true);
     setLoadingDetalle(true);
     
     try {
-      const [libroRes, autoresRes, editorialesRes, categoriasRes] = await Promise.all([
-        catalogoService.getLibroById(libro.id),
-        catalogoService.getAutores(),
-        catalogoService.getEditoriales(),
-        catalogoService.getCategorias()
-      ]);
-      
-      const normalizeArray = (res) => res.data?.items || res.data?.data || res.data || [];
-      const autores = normalizeArray(autoresRes);
-      const editoriales = normalizeArray(editorialesRes);
-      const categorias = normalizeArray(categoriasRes);
-      
-      const libroData = libroRes.data?.data || libroRes.data || libroRes;
-      
-      const autor = autores.find(a => a.id === Number(libroData.autor_id) || a.id === libroData.autor_id);
-      const editorial = editoriales.find(e => e.id === Number(libroData.editorial_id) || e.id === livroData.editorial_id);
-      const categoria = categorias.find(c => c.id === Number(libroData.categoria_id) || c.id === libroData.categoria_id);
+      const response = await catalogoService.getLibroById(libro.id);
+      const libroData = response.data?.data || response.data;
       
       setLibroDetalle(prev => ({
         ...prev,
         ...libroData,
-        autor_nombre: autor?.nombre || 'No especificado',
-        editorial_nombre: editorial?.nombre || 'No especificado',
-        categoria_nombre: categoria?.nombre || 'No especificado'
+        autor_nombre: libroData.autor || 'No especificado',
+        editorial_nombre: libroData.editorial || 'No especificado',
+        categoria_nombre: libroData.categoria || 'No especificado'
       }));
     } catch (err) {
       console.error('Error al cargar detalles del libro:', err);
