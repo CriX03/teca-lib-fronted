@@ -100,15 +100,16 @@ export const Catalogo = () => {
         catalogoService.getCategorias()
       ]);
       
-      const normalize = (res) => res.data?.items || res.data?.data || res.data || [];
-      const libroData = normalize(libroRes);
-      const autores = normalize(autoresRes);
-      const editoriales = normalize(editorialesRes);
-      const categorias = normalize(categoriasRes);
+      const normalizeArray = (res) => res.data?.items || res.data?.data || res.data || [];
+      const autores = normalizeArray(autoresRes);
+      const editoriales = normalizeArray(editorialesRes);
+      const categorias = normalizeArray(categoriasRes);
       
-      const autor = autores.find(a => a.id === Number(libroData.autor_id) || a.id === livroData.autor_id);
+      const libroData = libroRes.data?.data || libroRes.data || libroRes;
+      
+      const autor = autores.find(a => a.id === Number(libroData.autor_id) || a.id === libroData.autor_id);
       const editorial = editoriales.find(e => e.id === Number(libroData.editorial_id) || e.id === livroData.editorial_id);
-      const categoria = categorias.find(c => c.id === Number(libroData.categoria_id) || c.id === livroData.categoria_id);
+      const categoria = categorias.find(c => c.id === Number(libroData.categoria_id) || c.id === libroData.categoria_id);
       
       setLibroDetalle(prev => ({
         ...prev,
@@ -118,6 +119,7 @@ export const Catalogo = () => {
         categoria_nombre: categoria?.nombre || 'No especificado'
       }));
     } catch (err) {
+      console.error('Error al cargar detalles del libro:', err);
       notify.error('Error al cargar los detalles del libro');
       setIsDetalleModalOpen(false);
     } finally {
