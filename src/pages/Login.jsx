@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
 import { notify } from '../utils/notify';
 
@@ -11,6 +11,7 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +24,7 @@ export const Login = () => {
         setError(res.error?.message || 'Credenciales inválidas');
       } else {
         notify.success('¡Bienvenido de vuelta!');
+        navigate('/dashboard');
       }
     } catch (_err) {
       setError('Error inesperado al iniciar sesión');

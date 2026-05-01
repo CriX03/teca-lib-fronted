@@ -60,6 +60,11 @@ export const AuthProvider = ({ children }) => {
         const newToken = response.data.access_token;
         localStorage.setItem('token', newToken);
         setToken(newToken);
+        // Fetch user data after login
+        const userResponse = await authService.getCurrentUser();
+        if (userResponse.success) {
+          setUser(userResponse.data);
+        }
         return { success: true };
       }
       return response;
