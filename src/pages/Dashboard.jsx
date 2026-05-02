@@ -1,3 +1,15 @@
+/**
+ * Dashboard.jsx - Página principal del dashboard
+ * 
+ * Este componente muestra la página de inicio después de iniciar sesión.
+ * Presenta un resumen de la actividad del usuario incluyendo métricas de
+ * libros en el catálogo, préstamos activos y totales, además de accesos
+ * rápidos a las funciones principales de la aplicación.
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Book, Bookmark, TrendingUp, ArrowRight, Clock } from 'lucide-react';
@@ -6,23 +18,40 @@ import { catalogoService } from '../services/catalogoService';
 import { prestamosService } from '../services/prestamosService';
 import { CardSkeleton } from '../components/ui/LoadingSpinner';
 
+/**
+ * Componente del dashboard principal
+ * Muestra estadísticas y accesos rápidos al usuario
+ * @returns {JSX.Element} Dashboard de la aplicación
+ */
 export const Dashboard = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({ libros: null, prestamosActivos: null, prestamosTotal: null });
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth(); // Usuario autenticado
+  
+  // Estado de las estadísticas
+  const [stats, setStats] = useState({ 
+    libros: null,           // Total de libros en el catálogo
+    prestamosActivos: null, // Préstamos activos del usuario
+    prestamosTotal: null    // Total de préstamos del usuario
+  });
+  const [loading, setLoading] = useState(true); // Estado de carga
 
+  /**
+   * Effect para cargar las estadísticas al montar el componente
+   */
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        // Ejecutar ambas peticiones en paralelo
         const [librosRes, prestamosRes] = await Promise.allSettled([
           catalogoService.getLibros({ per_page: 1 }),
           prestamosService.getMisPrestamos(),
         ]);
 
+        // Procesar respuesta de libros
         const librosData = librosRes.status === 'fulfilled' 
           ? (librosRes.value?.data?.pagination?.total ?? '—')
           : '—';
         
+        // Procesar respuesta de préstamos
         let activos = '—';
         let total = '—';
         if (prestamosRes.status === 'fulfilled') {
@@ -35,7 +64,7 @@ export const Dashboard = () => {
 
         setStats({ libros: librosData, prestamosActivos: activos, prestamosTotal: total });
       } catch {
-        // Silently fail — cards will show "—"
+        // Silenciosamente fallar - las cards mostrarán "—"
       } finally {
         setLoading(false);
       }
@@ -44,6 +73,7 @@ export const Dashboard = () => {
     fetchStats();
   }, []);
 
+  // Configuración de las tarjetas de métricas
   const cards = [
     { 
       label: 'Libros en Catálogo', 
@@ -73,7 +103,7 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      {/* Welcome */}
+      {/* Sección de bienvenida */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
           ¡Hola, {user?.nombre?.split(' ')[0] || 'Usuario'}! 👋
@@ -83,7 +113,7 @@ export const Dashboard = () => {
         </p>
       </div>
 
-      {/* Metric Cards */}
+      {/* Tarjetas de métricas */}
       {loading ? (
         <CardSkeleton count={3} />
       ) : (
@@ -118,7 +148,7 @@ export const Dashboard = () => {
         </div>
       )}
 
-      {/* Quick actions */}
+      {/* Sección de accesos rápidos */}
       <div className="card">
         <div className="card-header">
           <div className="flex items-center gap-2">

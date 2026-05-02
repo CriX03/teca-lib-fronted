@@ -1,10 +1,23 @@
+/**
+ * LoadingSpinner.jsx - Componentes de indicadores de carga
+ * 
+ * Este módulo proporciona diferentes componentes para mostrar estados de carga
+ * en la aplicación. Incluye el spinner principal y skeleton loaders para
+ * tablas y cards.
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { Loader2 } from 'lucide-react';
 
 /**
- * Spinner de carga reutilizable con múltiples variantes.
+ * Spinner de carga reutilizable con múltiples variantes visuales
  * @param {'sm' | 'md' | 'lg' | 'xl'} size - Tamaño del spinner
- * @param {string} text - Texto descriptivo
- * @param {'default' | 'overlay' | 'inline' | 'page'} variant - Variante visual
+ * @param {string} text - Texto descriptivo que acompaña al spinner
+ * @param {'default' | 'overlay' | 'inline' | 'page'} variant - Variante visual del componente
+ * @param {string} className - Clases CSS adicionales
+ * @returns {JSX.Element} Componente de spinner
  */
 export const LoadingSpinner = ({ 
   size = 'md', 
@@ -12,6 +25,7 @@ export const LoadingSpinner = ({
   variant = 'default',
   className = '' 
 }) => {
+  // Mapeo de tamaños
   const sizes = {
     sm: 'w-4 h-4',
     md: 'w-6 h-6',
@@ -19,10 +33,12 @@ export const LoadingSpinner = ({
     xl: 'w-12 h-12',
   };
 
+  // Elemento spinner base
   const spinner = (
     <Loader2 className={`${sizes[size]} text-primary-600 animate-spin`} />
   );
 
+  // Variante inline: para usar dentro de texto o botones
   if (variant === 'inline') {
     return (
       <span className={`inline-flex items-center gap-2 ${className}`}>
@@ -32,6 +48,7 @@ export const LoadingSpinner = ({
     );
   }
 
+  // Variante overlay: pantalla completa con fondo difuminado
   if (variant === 'overlay') {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
@@ -43,6 +60,7 @@ export const LoadingSpinner = ({
     );
   }
 
+  // Variante page: pantalla completa centrada verticalmente
   if (variant === 'page') {
     return (
       <div className="flex h-[60vh] w-full items-center justify-center">
@@ -57,7 +75,7 @@ export const LoadingSpinner = ({
     );
   }
 
-  // default
+  // Variante default: centering básico
   return (
     <div className={`flex flex-col items-center justify-center p-8 gap-3 ${className}`}>
       {spinner}
@@ -68,8 +86,10 @@ export const LoadingSpinner = ({
 
 /**
  * Skeleton loader para tablas
- * @param {number} rows - Número de filas skeleton
+ * Muestra filas simuladas con efecto de pulso mientras cargan datos
+ * @param {number} rows - Número de filas skeleton a mostrar
  * @param {number} cols - Número de columnas skeleton
+ * @returns {JSX.Element} Esqueleto de tabla
  */
 export const TableSkeleton = ({ rows = 5, cols = 4 }) => {
   return (
@@ -91,7 +111,9 @@ export const TableSkeleton = ({ rows = 5, cols = 4 }) => {
 
 /**
  * Skeleton loader para cards
- * @param {number} count - Número de cards skeleton
+ * Muestra tarjetas simuladas con efecto de pulso mientras cargan datos
+ * @param {number} count - Número de cards skeleton a mostrar
+ * @returns {JSX.Element} Esqueleto de tarjetas
  */
 export const CardSkeleton = ({ count = 3 }) => {
   return (

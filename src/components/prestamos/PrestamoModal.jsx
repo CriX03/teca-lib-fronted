@@ -1,14 +1,37 @@
+/**
+ * PrestamoModal.jsx - Modal para solicitar préstamos de libros
+ * 
+ * Este componente presenta un formulario modal que permite al usuario
+ * seleccionar la duración del préstamo y confirmar la solicitud.
+ * Calcula automáticamente la fecha de devolución basada en los días seleccionados.
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState } from 'react';
 import { X, BookOpen, Clock } from 'lucide-react';
 import { prestamosService } from '../../services/prestamosService';
 
+/**
+ * Modal para crear un nuevo préstamo de libro
+ * 
+ * @param {boolean} isOpen - Indica si el modal está abierto
+ * @param {Function} onClose - Función para cerrar el modal
+ * @param {Object} libro - Objeto del libro a prestar
+ * @param {Function} onSuccess - Callback cuando el préstamo se crea exitosamente
+ * @returns {JSX.Element|null} Modal de préstamo o null si está cerrado
+ */
 export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
-  const [dias, setDias] = useState(7);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [dias, setDias] = useState(7);          // Días de préstamo seleccionados
+  const [loading, setLoading] = useState(false); // Estado de carga
+  const [error, setError] = useState(null);     // Mensaje de error
 
   if (!isOpen || !libro) return null;
 
+  /**
+   * Maneja el envío del formulario de préstamo
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -22,6 +45,7 @@ export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
       onSuccess();
       onClose();
     } catch (err) {
+      // Manejo de errores específicos del negocio
       if (err.response?.data?.error?.code === 'BOOK_NOT_AVAILABLE' || err.code === 'BOOK_NOT_AVAILABLE') {
         setError('El libro no está disponible para préstamo.');
       } else if (err.response?.data?.error?.code === 'BOOK_ALREADY_LOANED' || err.code === 'BOOK_ALREADY_LOANED') {
@@ -34,12 +58,13 @@ export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
     }
   };
 
+  // Calcular fecha de devolución
   const returnDate = new Date();
   returnDate.setDate(returnDate.getDate() + Number(dias));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {/* Backdrop - Fondo oscuro semitransparente */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
@@ -61,6 +86,7 @@ export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
         </div>
         
         <form onSubmit={handleSubmit} className="p-5 space-y-5">
+          {/* Mensaje de error */}
           {error && (
             <div className="flex items-start gap-3 rounded-lg bg-red-50 p-3.5 border border-red-100 animate-slide-down">
               <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -70,7 +96,7 @@ export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
             </div>
           )}
 
-          {/* Libro info */}
+          {/* Información del libro seleccionado */}
           <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
             <p className="text-xs text-gray-500 mb-1">Libro seleccionado</p>
             <p className="font-semibold text-gray-900">{libro.titulo}</p>
@@ -81,7 +107,7 @@ export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
             )}
           </div>
 
-          {/* Días */}
+          {/* Selector de días de préstamo */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Días de préstamo
@@ -99,7 +125,7 @@ export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
             </select>
           </div>
 
-          {/* Return date preview */}
+          {/* Vista previa de fecha de devolución */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
             <Clock size={16} className="text-blue-500 flex-shrink-0" />
             <span>
@@ -110,7 +136,7 @@ export const PrestamoModal = ({ isOpen, onClose, libro, onSuccess }) => {
             </span>
           </div>
 
-          {/* Actions */}
+          {/* Botones de acción */}
           <div className="flex gap-3 pt-1">
             <button
               type="button"

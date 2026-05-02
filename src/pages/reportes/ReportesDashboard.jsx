@@ -1,3 +1,18 @@
+/**
+ * ReportesDashboard.jsx - Dashboard de reportes y estadísticas
+ * 
+ * Este componente muestra un panel de control con métricas y estadísticas
+ * de la biblioteca. Solo es accesible para usuarios con rol de administrador.
+ * 
+ * Reportes incluidos:
+ * - Libros más prestados: Top 10 libros con más préstamos
+ * - Préstamos por usuario: Usuarios con más préstamos activos
+ * - Préstamos con retraso: Lista de préstamos vencidos sin devolver
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react';
 import { reportesService } from '../../services/reportesService';
 import { BookOpen, Users, AlertTriangle, BarChart3, RefreshCw, CheckCircle } from 'lucide-react';
@@ -6,18 +21,27 @@ import { ErrorPage } from '../../components/ui/ErrorMessage';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { notify } from '../../utils/notify';
 
+/**
+ * Componente del dashboard de reportes
+ * @returns {JSX.Element} Dashboard de reportes
+ */
 export const ReportesDashboard = () => {
+  // Estado de los datos
   const [librosMasPrestados, setLibrosMasPrestados] = useState([]);
   const [prestamosPorUsuario, setPrestamosPorUsuario] = useState([]);
   const [retrasos, setRetrasos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const limit = 10;
+  const limit = 10; // Límite de resultados por reporte
 
+  /**
+   * Carga todos los reportes desde el servidor
+   */
   const fetchReportes = async () => {
     setLoading(true);
     setError('');
     try {
+      // Cargar los tres reportes en paralelo
       const [resLibros, resUsuarios, resRetrasos] = await Promise.all([
         reportesService.getLibrosMasPrestados(limit),
         reportesService.getPrestamosPorUsuario(limit),
@@ -35,14 +59,17 @@ export const ReportesDashboard = () => {
     }
   };
 
+  // Cargar reportes al montar el componente
   useEffect(() => {
     fetchReportes();
   }, []);
 
+  // Mostrar spinner de carga
   if (loading) {
     return <LoadingSpinner variant="page" text="Cargando reportes..." />;
   }
 
+  // Mostrar página de error
   if (error) {
     return <ErrorPage title="Error en Reportes" message={error} onRetry={fetchReportes} />;
   }
@@ -64,7 +91,7 @@ export const ReportesDashboard = () => {
         </button>
       </div>
 
-      {/* Summary Cards */}
+      {/* Tarjetas de resumen */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="card p-4 flex items-center gap-4">
           <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-primary-600">

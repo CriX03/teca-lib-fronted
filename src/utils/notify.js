@@ -1,10 +1,31 @@
+/**
+ * notify.js - Utilidad de notificaciones toast
+ * 
+ * Este módulo proporciona una interfaz unificada para mostrar notificaciones
+ * emergentes (toast) en la aplicación. Utiliza la librería react-hot-toast
+ * con estilos personalizados que siguen la identidad visual de Teca Biblioteca.
+ * 
+ * Tipos de notificaciones disponibles:
+ * - success: Para operaciones exitosas (color verde)
+ * - error: Para errores y fallos (color rojo)
+ * - info: Para información general (color azul)
+ * - warning: Para advertencias y alertas (color amarillo)
+ * - promise: Para operaciones asíncronas con estados de carga
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import toast from 'react-hot-toast';
 
 /**
- * Utilidad centralizada de notificaciones toast.
- * Usa react-hot-toast bajo el capó con estilos personalizados.
+ * Objeto con métodos para mostrar diferentes tipos de notificaciones
  */
 export const notify = {
+  /**
+   * Muestra una notificación de éxito
+   * @param {string} message - Mensaje a mostrar
+   */
   success: (message) =>
     toast.success(message, {
       style: {
@@ -22,6 +43,10 @@ export const notify = {
       },
     }),
 
+  /**
+   * Muestra una notificación de error
+   * @param {string} message - Mensaje de error a mostrar
+   */
   error: (message) =>
     toast.error(message, {
       style: {
@@ -40,6 +65,10 @@ export const notify = {
       duration: 5000,
     }),
 
+  /**
+   * Muestra una notificación informativa
+   * @param {string} message - Información a mostrar
+   */
   info: (message) =>
     toast(message, {
       icon: 'ℹ️',
@@ -54,6 +83,10 @@ export const notify = {
       },
     }),
 
+  /**
+   * Muestra una advertencia
+   * @param {string} message - Mensaje de advertencia
+   */
   warning: (message) =>
     toast(message, {
       icon: '⚠️',
@@ -69,6 +102,12 @@ export const notify = {
       duration: 5000,
     }),
 
+  /**
+   * Muestra una notificación basada en el estado de una promesa
+   * @param {Promise} promise - Promesa a monitorear
+   * @param {Object} options - Textos para cada estado
+   * @returns {Promise} La promesa original
+   */
   promise: (promise, { loading = 'Procesando...', success = '¡Listo!', error = 'Error' }) =>
     toast.promise(
       promise,

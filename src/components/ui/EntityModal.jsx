@@ -1,21 +1,48 @@
+/**
+ * EntityModal.jsx - Modal genérico para crear/editar entidades
+ * 
+ * Este componente es un modal reutilizable que permite crear o editar
+ * entidades del catálogo como autores, editoriales o categorías. Maneja
+ * la validación de entrada y muestra errores de forma consistente.
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react';
 import { X, Tag, Users, Building2 } from 'lucide-react';
 
+/**
+ * Configuración de iconos y etiquetas por tipo de entidad
+ */
 const iconMap = {
   categoria: { icon: Tag, label: 'Categoría', color: 'bg-purple-100', iconColor: 'text-purple-600' },
   autor: { icon: Users, label: 'Autor', color: 'bg-blue-100', iconColor: 'text-blue-600' },
   editorial: { icon: Building2, label: 'Editorial', color: 'bg-emerald-100', iconColor: 'text-emerald-600' },
 };
 
+/**
+ * Modal genérico para crear o editar entidades del catálogo
+ * 
+ * @param {boolean} isOpen - Indica si el modal está abierto
+ * @param {Function} onClose - Función para cerrar el modal
+ * @param {Function} onSubmit - Función para manejar el envío del formulario
+ * @param {Object} initialData - Datos iniciales para edición
+ * @param {string} entityType - Tipo de entidad ('categoria', 'autor', 'editorial')
+ * @param {boolean} loading - Indica si hay una operación en curso
+ * @returns {JSX.Element|null} Modal o null si está cerrado
+ */
 export const EntityModal = ({ isOpen, onClose, onSubmit, initialData, entityType, loading }) => {
   const [nombre, setNombre] = useState('');
   const [error, setError] = useState('');
   
+  // Obtener configuración según el tipo de entidad
   const config = iconMap[entityType] || iconMap.categoria;
   const isEditing = !!initialData?.id;
   const title = isEditing ? `Editar ${config.label}` : `Crear ${config.label}`;
   const IconComp = config.icon;
 
+  // Reiniciar formulario cuando se abre el modal
   useEffect(() => {
     if (isOpen) {
       setNombre(initialData?.nombre || '');
@@ -23,18 +50,25 @@ export const EntityModal = ({ isOpen, onClose, onSubmit, initialData, entityType
     }
   }, [isOpen, initialData]);
 
+  /**
+   * Maneja el envío del formulario
+   * Valida el nombre antes de enviar
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmed = nombre.trim();
     
+    // Validación: nombre requerido
     if (!trimmed) {
       setError('El nombre es requerido');
       return;
     }
+    // Validación: mínimo 2 caracteres
     if (trimmed.length < 2) {
       setError('El nombre debe tener al menos 2 caracteres');
       return;
     }
+    // Si no hay cambios, cerrar sin enviar
     if (trimmed === initialData?.nombre) {
       onClose();
       return;
@@ -49,6 +83,7 @@ export const EntityModal = ({ isOpen, onClose, onSubmit, initialData, entityType
     }
   };
 
+  // Maneja cambios en el input y limpia errores previos
   const handleChange = (e) => {
     setNombre(e.target.value);
     if (error) setError('');
@@ -58,8 +93,10 @@ export const EntityModal = ({ isOpen, onClose, onSubmit, initialData, entityType
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop - Fondo oscuro */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       
+      {/* Modal */}
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
         <div className="flex justify-between items-center p-5 border-b border-gray-100">
           <div className="flex items-center gap-2.5">

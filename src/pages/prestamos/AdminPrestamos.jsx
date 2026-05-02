@@ -1,3 +1,23 @@
+/**
+ * AdminPrestamos.jsx - Panel de administración de préstamos
+ * 
+ * Este componente proporciona una vista completa de todos los préstamos
+ * del sistema para usuarios administradores. Permite gestionar préstamos
+ * de todos los usuarios, filtrar por estado, buscar por título de libro
+ * y realizar devoluciones desde la interfaz administrativa.
+ * 
+ * Características:
+ * - Vista de todos los préstamos del sistema
+ * - Filtros por estado (activos/devueltos)
+ * - Búsqueda por título de libro
+ * - Paginación configurable
+ * -统计ísticas rápidas de la página
+ * - Botón de devolución para préstamos activos
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react';
 import { BookOpen, Calendar, CheckCircle, Search, ChevronLeft, ChevronRight, Users, AlertTriangle } from 'lucide-react';
 import { prestamosService } from '../../services/prestamosService';
@@ -5,24 +25,31 @@ import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
 
+/**
+ * Componente de panel de administración de préstamos
+ * @returns {JSX.Element} Panel de gestión de préstamos
+ */
 export const AdminPrestamos = () => {
-  const [prestamos, setPrestamos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [devolviendo, setDevolviendo] = useState(null);
+  const [prestamos, setPrestamos] = useState([]);         // Lista de préstamos
+  const [loading, setLoading] = useState(true);           // Estado de carga
+  const [error, setError] = useState(null);              // Mensaje de error
+  const [devolviendo, setDevolviendo] = useState(null); // Préstamo en proceso
   const confirm = useConfirm();
 
-  // Pagination
+  // Configuración de paginación
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Filters
+  // Filtros
   const [estadoFilter, setEstadoFilter] = useState('');
   const [tituloFilter, setTituloFilter] = useState('');
   const [searchInput, setSearchInput] = useState('');
 
+  /**
+   * Carga todos los préstamos según los filtros actuales
+   */
   const fetchPrestamos = async () => {
     try {
       setLoading(true);
@@ -48,16 +75,24 @@ export const AdminPrestamos = () => {
     }
   };
 
+  // Recargar cuando cambian filtros o paginación
   useEffect(() => {
     fetchPrestamos();
   }, [page, limit, estadoFilter]);
 
+  /**
+   * Maneja la búsqueda con el filtro de título
+   */
   const handleSearch = (e) => {
     e.preventDefault();
     setPage(1);
     fetchPrestamos();
   };
 
+  /**
+   * Maneja la devolución de un libro como administrador
+   * @param {Object} prestamo - Préstamo a devolver
+   */
   const handleDevolucion = async (prestamo) => {
     const confirmed = await confirm({
       title: 'Confirmar devolución (Admin)',
@@ -84,6 +119,11 @@ export const AdminPrestamos = () => {
     }
   };
 
+  /**
+   * Formatea una fecha para mostrar
+   * @param {string} dateString - Fecha en formato ISO
+   * @returns {string} Fecha formateada
+   */
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -97,11 +137,19 @@ export const AdminPrestamos = () => {
     });
   };
 
+  /**
+   * Verifica si un préstamo está vencido
+   * @param {string} fechaLimite - Fecha límite
+   * @returns {boolean} true si está vencido
+   */
   const isOverdue = (fechaLimite) => {
     if (!fechaLimite) return false;
     return new Date(fechaLimite) < new Date();
   };
 
+  /**
+   * Limpia todos los filtros
+   */
   const clearFilters = () => {
     setEstadoFilter('');
     setSearchInput('');
@@ -129,10 +177,10 @@ export const AdminPrestamos = () => {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filtros */}
       <div className="card">
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
-          {/* Estado filter */}
+          {/* Filtro por estado */}
           <div className="flex-1">
             <label className="block text-xs font-medium text-gray-500 mb-1.5">Estado</label>
             <select
@@ -146,7 +194,7 @@ export const AdminPrestamos = () => {
             </select>
           </div>
 
-          {/* Search by title */}
+          {/* Búsqueda por título */}
           <div className="flex-1">
             <label className="block text-xs font-medium text-gray-500 mb-1.5">Buscar por libro</label>
             <div className="flex gap-2">
@@ -163,7 +211,7 @@ export const AdminPrestamos = () => {
             </div>
           </div>
 
-          {/* Items per page */}
+          {/* Items por página */}
           <div className="w-32">
             <label className="block text-xs font-medium text-gray-500 mb-1.5">Por página</label>
             <select
@@ -177,7 +225,7 @@ export const AdminPrestamos = () => {
             </select>
           </div>
 
-          {/* Clear filters */}
+          {/* Limpiar filtros */}
           {hasActiveFilters && (
             <button
               type="button"
@@ -190,7 +238,7 @@ export const AdminPrestamos = () => {
         </form>
       </div>
 
-      {/* Stats */}
+      {/* Estadísticas */}
       {!loading && prestamos.length > 0 && (
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
@@ -221,7 +269,7 @@ export const AdminPrestamos = () => {
       {/* Error */}
       {error && <ErrorMessage message={error} onRetry={fetchPrestamos} />}
 
-      {/* Table */}
+      {/* Tabla de préstamos */}
       <div className="card">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -324,7 +372,7 @@ export const AdminPrestamos = () => {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Paginación */}
         {!loading && totalPages > 1 && (
           <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
             <p className="text-sm text-gray-500">

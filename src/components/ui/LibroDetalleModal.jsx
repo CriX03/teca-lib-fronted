@@ -1,8 +1,32 @@
+/**
+ * LibroDetalleModal.jsx - Modal de detalles del libro
+ * 
+ * Este componente muestra una ventana modal con información detallada
+ * de un libro seleccionado del catálogo. Muestra datos como título,
+ * ISBN, disponibilidad, autor, editorial, categoría, fecha de publicación
+ * y descripción. Incluye manejo de estados de carga.
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { X, BookOpen, Tag, Users, Building2, Calendar, FileText, CheckCircle, XCircle } from 'lucide-react';
 
+/**
+ * Modal para mostrar detalles completos de un libro
+ * 
+ * @param {boolean} isOpen - Indica si el modal está abierto
+ * @param {Function} onClose - Función para cerrar el modal
+ * @param {Object} libro - Objeto con los datos del libro
+ * @param {boolean} loading - Indica si está cargando datos adicionales
+ * @returns {JSX.Element|null} Modal de detalles o null si está cerrado
+ */
 export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
   if (!isOpen || !libro) return null;
 
+  /**
+   * Cierra el modal al hacer click en el backdrop
+   */
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -13,7 +37,9 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={handleBackdropClick}>
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" />
       
+      {/* Contenedor del modal */}
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden animate-scale-in flex flex-col">
+        {/* Header */}
         <div className="flex justify-between items-center p-5 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-primary-100 flex items-center justify-center">
@@ -26,8 +52,10 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
           </button>
         </div>
         
+        {/* Contenido del modal */}
         <div className="p-5 overflow-y-auto flex-1 space-y-5">
           {loading ? (
+            // Estado de carga
             <div className="flex items-center justify-center py-8">
               <svg className="animate-spin h-8 w-8 text-primary-600" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -36,6 +64,7 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
             </div>
           ) : (
             <>
+              {/* Título, ISBN y disponibilidad */}
               <div className="text-center pb-4 border-b border-gray-100">
                 <h3 className="text-xl font-bold text-gray-900 leading-tight">{libro.titulo}</h3>
                 {libro.isbn && (
@@ -58,6 +87,7 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
                 </div>
               </div>
 
+              {/* Detalles del libro */}
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DetailItem
@@ -84,6 +114,7 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
                   />
                 </div>
 
+                {/* Descripción */}
                 {libro.descripcion && (
                   <div className="pt-2">
                     <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
@@ -96,6 +127,7 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
                   </div>
                 )}
 
+                {/* Metadatos */}
                 <div className="pt-2 text-xs text-gray-400 text-center">
                   <span>ID: {libro.id}</span>
                   {libro.created_at && (
@@ -109,6 +141,7 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
           )}
         </div>
         
+        {/* Footer con botón de cerrar */}
         <div className="p-5 border-t border-gray-100 flex-shrink-0">
           <button onClick={onClose} className="btn btn-primary w-full">
             Cerrar
@@ -119,6 +152,11 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
   );
 };
 
+/**
+ * Componente auxiliar para mostrar un elemento de detalle
+ * @param {Object} props - Propiedades del componente
+ * @returns {JSX.Element} Elemento de detalle
+ */
 const DetailItem = ({ icon: Icon, label, value }) => (
   <div className="flex items-start gap-3">
     <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">

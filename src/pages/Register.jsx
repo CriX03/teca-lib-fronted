@@ -1,24 +1,43 @@
+/**
+ * Register.jsx - Página de registro de nuevos usuarios
+ * 
+ * Este componente renderiza el formulario de registro donde los nuevos
+ * usuarios pueden crear una cuenta en el sistema. Solicita información
+ * básica como nombre, email, contraseña y rol (estudiante o docente).
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { notify } from '../utils/notify';
 
+/**
+ * Componente de formulario de registro
+ * @returns {JSX.Element} Formulario de registro
+ */
 export const Register = () => {
+  // Estado del formulario
   const [formData, setFormData] = useState({
-    nombre: '',
-    email: '',
-    contrasena: '',
-    rol: 'estudiante'
+    nombre: '',        // Nombre completo del usuario
+    email: '',         // Correo electrónico
+    contrasena: '',    // Contraseña
+    rol: 'estudiante'  // Rol del usuario (estudiante/docente)
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Mostrar/ocultar contraseña
+  const [error, setError] = useState('');                  // Mensaje de error
+  const [success, setSuccess] = useState(false);            // Registro exitoso
+  const [isLoading, setIsLoading] = useState(false);        // Estado de carga
   
-  const { register } = useAuth();
-  const navigate = useNavigate();
+  const { register } = useAuth(); // Función de registro del contexto
+  const navigate = useNavigate(); // Navegación programática
 
+  /**
+   * Actualiza los valores del formulario
+   */
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -26,6 +45,9 @@ export const Register = () => {
     });
   };
 
+  /**
+   * Maneja el envío del formulario de registro
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -50,6 +72,7 @@ export const Register = () => {
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
+      {/* Mensaje de error */}
       {error && (
         <div className="flex items-start gap-3 rounded-lg bg-red-50 p-3.5 border border-red-100 animate-slide-down">
           <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -58,6 +81,8 @@ export const Register = () => {
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </div>
       )}
+      
+      {/* Mensaje de éxito */}
       {success && (
         <div className="flex items-start gap-3 rounded-lg bg-emerald-50 p-3.5 border border-emerald-100 animate-slide-down">
           <CheckCircle size={18} className="text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -67,6 +92,7 @@ export const Register = () => {
         </div>
       )}
       
+      {/* Campo de nombre completo */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="reg-nombre">
           Nombre Completo
@@ -83,6 +109,7 @@ export const Register = () => {
         />
       </div>
 
+      {/* Campo de email */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="reg-email">
           Correo electrónico
@@ -99,6 +126,7 @@ export const Register = () => {
         />
       </div>
 
+      {/* Campo de contraseña */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="reg-contrasena">
           Contraseña
@@ -126,6 +154,7 @@ export const Register = () => {
         </div>
       </div>
 
+      {/* Selector de rol */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="reg-rol">
           Rol
@@ -143,6 +172,7 @@ export const Register = () => {
         </select>
       </div>
 
+      {/* Botón de registro */}
       <button
         type="submit"
         disabled={isLoading || success}
@@ -164,6 +194,7 @@ export const Register = () => {
         )}
       </button>
       
+      {/* Enlace a login */}
       <div className="text-center text-sm text-gray-500 pt-2">
         ¿Ya tienes cuenta?{' '}
         <Link to="/login" className="text-primary-600 hover:text-primary-500 font-semibold transition-colors">

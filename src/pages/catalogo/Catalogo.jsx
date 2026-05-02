@@ -1,3 +1,23 @@
+/**
+ * Catalogo.jsx - Página del catálogo de libros
+ * 
+ * Este componente muestra la lista completa de libros del catálogo con
+ * funcionalidades de búsqueda, filtrado, paginación y acciones según el rol
+ * del usuario. Los administradores pueden crear, editar y eliminar libros,
+ * mientras que los usuarios regulares pueden ver detalles y solicitar préstamos.
+ * 
+ * Funcionalidades:
+ * - Listado paginado de libros
+ * - Búsqueda por título con debounce
+ * - Filtro por disponibilidad
+ * - Modal de detalles del libro
+ * - Modal de solicitud de préstamo
+ * - Acciones de CRUD (solo admin)
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, BookOpen, ChevronLeft, ChevronRight, Info } from 'lucide-react';
@@ -10,23 +30,27 @@ import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
 
+/**
+ * Componente principal del catálogo de libros
+ * @returns {JSX.Element} Página del catálogo
+ */
 export const Catalogo = () => {
-  const [libros, setLibros] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [libros, setLibros] = useState([]);        // Lista de libros
+  const [loading, setLoading] = useState(true);  // Estado de carga
+  const [error, setError] = useState(null);       // Mensaje de error
   
-  // Filters & Pagination
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearch = useDebounce(searchTerm, 500);
-  const [disponible, setDisponible] = useState('');
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  // Filtros y paginación
+  const [searchTerm, setSearchTerm] = useState('');           // Término de búsqueda
+  const debouncedSearch = useDebounce(searchTerm, 500);       // Búsqueda con debounce
+  const [disponible, setDisponible] = useState('');           // Filtro de disponibilidad
+  const [page, setPage] = useState(1);                        // Página actual
+  const [totalPages, setTotalPages] = useState(1);             // Total de páginas
   
-  // Prestamo Modal State
+  // Estado del modal de préstamo
   const [isPrestamoModalOpen, setIsPrestamoModalOpen] = useState(false);
   const [libroSeleccionado, setLibroSeleccionado] = useState(null);
   
-  // Detalle Modal State
+  // Estado del modal de detalles
   const [isDetalleModalOpen, setIsDetalleModalOpen] = useState(false);
   const [libroDetalle, setLibroDetalle] = useState(null);
   const [loadingDetalle, setLoadingDetalle] = useState(false);
@@ -36,6 +60,9 @@ export const Catalogo = () => {
   const navigate = useNavigate();
   const confirm = useConfirm();
 
+  /**
+   * Obtiene la lista de libros desde el servidor
+   */
   const fetchLibros = async () => {
     try {
       setLoading(true);
@@ -64,10 +91,15 @@ export const Catalogo = () => {
     }
   };
 
+  // Recargar libros cuando cambian filtros o página
   useEffect(() => {
     fetchLibros();
   }, [debouncedSearch, disponible, page]);
 
+  /**
+   * Maneja la eliminación de un libro
+   * @param {Object} libro - Libro a eliminar
+   */
   const handleDelete = async (libro) => {
     const confirmed = await confirm({
       title: '¿Eliminar libro?',
@@ -87,7 +119,11 @@ export const Catalogo = () => {
     }
   };
 
-const handleVerDetalle = async (libro) => {
+  /**
+   * Maneja la visualización de detalles de un libro
+   * @param {Object} libro - Libro a ver
+   */
+  const handleVerDetalle = async (libro) => {
     setLibroDetalle(libro);
     setIsDetalleModalOpen(true);
     setLoadingDetalle(true);
@@ -142,7 +178,7 @@ const handleVerDetalle = async (libro) => {
           </div>
       </div>
 
-      {/* Filters */}
+      {/* Filtros */}
       <div className="card p-4 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -172,7 +208,7 @@ const handleVerDetalle = async (libro) => {
         </select>
       </div>
 
-      {/* Content */}
+      {/* Contenido */}
       <div className="card">
         {error && (
           <ErrorMessage message={error} onRetry={fetchLibros} />
@@ -276,7 +312,7 @@ const handleVerDetalle = async (libro) => {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Paginación */}
         {!loading && totalPages > 1 && (
           <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
             <button
@@ -322,6 +358,7 @@ const handleVerDetalle = async (libro) => {
         )}
       </div>
 
+      {/* Modal de préstamo */}
       <PrestamoModal
         isOpen={isPrestamoModalOpen}
         onClose={() => {
@@ -335,6 +372,7 @@ const handleVerDetalle = async (libro) => {
         }}
       />
 
+      {/* Modal de detalles */}
       <LibroDetalleModal
         isOpen={isDetalleModalOpen}
         onClose={() => {

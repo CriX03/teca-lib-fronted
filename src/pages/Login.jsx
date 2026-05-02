@@ -1,18 +1,38 @@
+/**
+ * Login.jsx - Página de inicio de sesión
+ * 
+ * Este componente renderiza el formulario de inicio de sesión donde los
+ * usuarios registrados pueden autenticarse para acceder al sistema.
+ * Valida las credenciales y maneja los estados de error y carga.
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
 import { notify } from '../utils/notify';
 
+/**
+ * Componente de formulario de inicio de sesión
+ * @returns {JSX.Element} Formulario de login
+ */
 export const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const [email, setEmail] = useState('');              // Email del usuario
+  const [password, setPassword] = useState('');       // Contraseña del usuario
+  const [showPassword, setShowPassword] = useState(false); // Mostrar/ocultar contraseña
+  const [error, setError] = useState('');             // Mensaje de error
+  const [isLoading, setIsLoading] = useState(false);  // Estado de carga
+  
+  const { login } = useAuth();                         // Función de login del contexto
+  const navigate = useNavigate();                      // Navegación programática
 
+  /**
+   * Maneja el envío del formulario de login
+   * @param {React.FormEvent} e - Evento del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -35,6 +55,7 @@ export const Login = () => {
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
+      {/* Mensaje de error */}
       {error && (
         <div className="flex items-start gap-3 rounded-lg bg-red-50 p-3.5 border border-red-100 animate-slide-down">
           <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -44,6 +65,7 @@ export const Login = () => {
         </div>
       )}
 
+      {/* Campo de email */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="login-email">
           Correo electrónico
@@ -59,6 +81,7 @@ export const Login = () => {
         />
       </div>
 
+      {/* Campo de contraseña con toggle de visibilidad */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="login-password">
           Contraseña
@@ -84,6 +107,7 @@ export const Login = () => {
         </div>
       </div>
 
+      {/* Botón deSubmit */}
       <button
         type="submit"
         disabled={isLoading}
@@ -105,6 +129,7 @@ export const Login = () => {
         )}
       </button>
 
+      {/* Enlace a registro */}
       <div className="text-center text-sm text-gray-500 pt-2">
         ¿No tienes cuenta?{' '}
         <Link to="/registro" className="text-primary-600 hover:text-primary-500 font-semibold transition-colors">

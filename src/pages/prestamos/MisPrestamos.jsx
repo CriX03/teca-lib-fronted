@@ -1,3 +1,21 @@
+/**
+ * MisPrestamos.jsx - Página de préstamos del usuario
+ * 
+ * Este componente muestra los préstamos del usuario autenticado, separando
+ * los préstamos activos del historial de devoluciones. Permite visualizar
+ * el estado de cada préstamo, las fechas de préstamo y límite, y para
+ * usuarios administradores, también permite devolver los libros.
+ * 
+ * Características:
+ * - Lista de préstamos activos con estado de vencimiento
+ * - Historial de libros devueltos
+ * - Carga de títulos de libros en tiempo real
+ * - Botón de devolución para admins
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect, useContext } from 'react';
 import { BookOpen, Calendar, CheckCircle, AlertTriangle } from 'lucide-react';
 import { prestamosService } from '../../services/prestamosService';
@@ -7,28 +25,37 @@ import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
 import { AuthContext } from '../../context/AuthContext';
 
+/**
+ * Componente de préstamos del usuario
+ * @returns {JSX.Element} Página de préstamos
+ */
 export const MisPrestamos = () => {
   const { user } = useContext(AuthContext);
-  const [prestamos, setPrestamos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [devolviendo, setDevolviendo] = useState(null);
+  const [prestamos, setPrestamos] = useState([]);        // Lista de préstamos
+  const [loading, setLoading] = useState(true);          // Estado de carga
+  const [error, setError] = useState(null);             // Mensaje de error
+  const [devolviendo, setDevolviendo] = useState(null); // ID del préstamo en proceso
   const confirm = useConfirm();
 
   const isAdmin = user?.rol === 'admin';
 
+  /**
+   * Carga los préstamos del usuario
+   */
   const fetchPrestamos = async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await prestamosService.getMisPrestamos();
+      
       if (response.data && response.data.success !== false) {
         const data = response.data.data || response.data;
         const prestamos = data.items || data.prestamos || data || [];
 
+        // Cargar títulos de los libros
         const libroIds = [...new Set(prestamos.map(p => p.libro_id).filter(Boolean))];
-
         const libroTitles = {};
+        
         await Promise.all(
           libroIds.map(async (id) => {
             try {
@@ -41,6 +68,7 @@ export const MisPrestamos = () => {
           })
         );
 
+        // Enriquecer préstamos con títulos
         const prestamosEnriquecidos = prestamos.map(p => ({
           ...p,
           titulo: libroTitles[p.libro_id] || `Libro #${p.libro_id}`,
@@ -56,10 +84,15 @@ export const MisPrestamos = () => {
     }
   };
 
+  // Cargar préstamos al montar el componente
   useEffect(() => {
     fetchPrestamos();
   }, []);
 
+  /**
+   * Maneja la devolución de un libro
+   * @param {Object} prestamo - Préstamo a devolver
+   */
   const handleDevolucion = async (prestamo) => {
     const titulo = prestamo.titulo || `Libro #${prestamo.libro_id}`;
     const confirmed = await confirm({
@@ -83,6 +116,11 @@ export const MisPrestamos = () => {
     }
   };
 
+  /**
+   * Formatea una fecha para mostrar en español
+   * @param {string} dateString - Fecha en formato ISO
+   * @returns {string} Fecha formateada
+   */
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -94,17 +132,23 @@ export const MisPrestamos = () => {
     });
   };
 
+  /**
+   * Verifica si un préstamo está vencido
+   * @param {string} fechaLimite - Fecha límite del préstamo
+   * @returns {boolean} true si está vencido
+   */
   const isOverdue = (fechaLimite) => {
     if (!fechaLimite) return false;
     return new Date(fechaLimite) < new Date();
   };
 
-  // Separar activos y devueltos
+  // Separar préstamos activos y devueltos
   const activos = prestamos.filter(p => p.estado === 'activo' || p.estado === 'active');
   const devueltos = prestamos.filter(p => p.estado !== 'activo' && p.estado !== 'active');
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -227,7 +271,7 @@ export const MisPrestamos = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {                devueltos.map((prestamo) => {
+                {devueltos.map((prestamo) => {
                   const titulo = prestamo.titulo || `Libro #${prestamo.libro_id}`;
                   return (
                     <tr key={prestamo.id} className="table-row-hover">

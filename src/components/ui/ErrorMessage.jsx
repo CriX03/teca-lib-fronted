@@ -1,5 +1,20 @@
+/**
+ * ErrorMessage.jsx - Componentes para mostrar errores
+ * 
+ * Este módulo proporciona componentes para mostrar diferentes tipos de errores
+ * en la aplicación, desde errores inline hasta pantallas completas de error.
+ * Cada tipo de error tiene su propia configuración visual.
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { AlertCircle, RefreshCw, WifiOff, ShieldX, ServerCrash } from 'lucide-react';
 
+/**
+ * Configuración de estilos para cada tipo de error
+ * Define el icono, colores de fondo, borde, texto y botón
+ */
 const errorConfig = {
   default: {
     icon: AlertCircle,
@@ -44,10 +59,13 @@ const errorConfig = {
 };
 
 /**
- * Mensaje de error inline con variantes contextuales.
- * @param {string} message - Mensaje de error
+ * Componente para mostrar mensajes de error inline
+ * Se usa dentro de formularios, tablas u otras áreas pequeñas
+ * 
+ * @param {string} message - Mensaje de error a mostrar
  * @param {'default' | 'warning' | 'network' | 'forbidden' | 'server'} type - Tipo de error
- * @param {Function} onRetry - Callback para reintentar
+ * @param {Function} onRetry - Función para reintentar la operación
+ * @returns {JSX.Element} Componente de mensaje de error
  */
 export const ErrorMessage = ({ message, type = 'default', onRetry }) => {
   const config = errorConfig[type] || errorConfig.default;
@@ -77,10 +95,13 @@ export const ErrorMessage = ({ message, type = 'default', onRetry }) => {
 };
 
 /**
- * Pantalla completa de error (para errores fatales de página).
+ * Componente para mostrar pantalla completa de error
+ * Se usa cuando hay errores fatales que impiden cargar la página
+ * 
  * @param {string} title - Título del error
- * @param {string} message - Mensaje descriptivo
- * @param {Function} onRetry - Callback para reintentar
+ * @param {string} message - Mensaje descriptivo del error
+ * @param {Function} onRetry - Función para reintentar
+ * @returns {JSX.Element} Página de error completa
  */
 export const ErrorPage = ({ title = 'Error', message, onRetry }) => {
   return (

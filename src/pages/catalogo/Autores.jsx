@@ -1,3 +1,19 @@
+/**
+ * Autores.jsx - Gestión de autores del catálogo
+ * 
+ * Este componente permite visualizar y gestionar los autores del catálogo
+ * de libros. Solo los administradores pueden crear, editar y eliminar autores.
+ * 
+ * Funcionalidades:
+ * - Listado de todos los autores
+ * - Crear nuevo autor mediante modal
+ * - Editar autor existente
+ * - Eliminar autor con confirmación
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Users } from 'lucide-react';
@@ -7,18 +23,26 @@ import { TableSkeleton, EmptyState, ErrorMessage, EntityModal } from '../../comp
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
 
+/**
+ * Componente de gestión de autores
+ * @returns {JSX.Element} Página de autores
+ */
 export const Autores = () => {
-  const [autores, setAutores] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [autores, setAutores] = useState([]);         // Lista de autores
+  const [loading, setLoading] = useState(true);        // Estado de carga
+  const [error, setError] = useState(null);           // Mensaje de error
   const confirm = useConfirm();
   const { user } = useAuth();
   const isAdmin = user?.rol === 'admin';
 
+  // Estado del modal
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAutor, setEditingAutor] = useState(null);
   const [saving, setSaving] = useState(false);
 
+  /**
+   * Carga la lista de autores
+   */
   const fetchAutores = async () => {
     try {
       setLoading(true);
@@ -31,6 +55,163 @@ export const Autores = () => {
       setLoading(false);
     }
   };
+
+  // Cargar autores al montar
+  useEffect(() => {
+    fetchAutores();
+  }, []);
+
+  /**
+   * Abre el modal para crear un nuevo autor
+   */
+  const handleOpenCreate = () => {
+    setEditingAutor(null);
+    setModalOpen(true);
+  };
+
+  /**
+   * Abre el modal para editar un autor
+   * @param {Object} autor - Autor a editar
+   */
+  const handleOpenEdit = (autor) => {
+    setEditingAutor(autor);
+    setModalOpen(true);
+  };
+
+  /**
+   * Maneja el envío del formulario del modal
+   * @param {string} nombre - Nombre del autor
+   */
+  const handleSubmit = async (nombre) => {
+    setSaving(true);
+    if (editingAutor) {
+      await catalogoService.updateAutor(editingAutor.id, { nombre });
+      notify.success('Autor actualizado exitosamente');
+    } else {
+      await catalogoService.createAutor({ nombre });
+      notify.success('Autor creado exitosamente');
+    }
+    fetchAutores();
+    setSaving(false);
+  };
+
+  /**
+   * Maneja la eliminación de un autor
+   * @param {Object} autor - Autor a eliminar
+   */
+  const handleDelete = async (autor) => {
+    const confirmed = await confirm({
+      title: '¿Eliminar autor?',
+      message: `Estás a punto de eliminar "${autor.nombre}". Esta acción no se puede deshacer.`,
+      confirmText: 'Eliminar',
+      type: 'danger',
+    });
+
+    if (confirmed) {
+      try {
+        await catalogoService.deleteAutor(autor.id);
+        notify.success('Autor eliminado exitosamente');
+        fetchAutores();
+      } catch (err) {
+        notify.error('Error al eliminar autor');
+      }
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link to="/catalogo" className="btn-ghost p-2 rounded-lg">
+            <ArrowLeft size={20} />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Users size={22} className="text-primary-600" />
+              Autores
+            </h1>
+            <p className="text-sm text-gray-500 mt-0.5">Gestiona los autores del catálogo</p>
+          </div>
+        </div>
+        {isAdmin && (
+          <button onClick={handleOpenCreate} className="btn btn-primary">
+            <Plus size={16} /> Crear Autor
+          </button>
+        )}
+      </div>
+
+      {/* Tabla de autores */}
+      <div className="card">
+        {error && <ErrorMessage message={error} onRetry={fetchAutores} />}
+        <table className="w-full text-left text-sm">
+          <thead className="bg-gray-50/80 text-xs uppercase text-gray-500 border-b border-gray-100">
+            <tr>
+              <th className="px-6 py-3.5 font-semibold">Nombre</th>
+              <th className="px-6 py-3.5 font-semibold text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {loading ? (
+              <tr>
+                <td colSpan="2" className="p-0">
+                  <TableSkeleton rows={4} cols={2} />
+                </td>
+              </tr>
+            ) : autores.length === 0 ? (
+              <tr>
+                <td colSpan="2" className="p-0">
+                  <EmptyState
+                    title="No hay autores"
+                    description="Comienza registrando un autor para el catálogo."
+                    iconType="users"
+                    action={
+                      isAdmin && (
+                        <button onClick={handleOpenCreate} className="btn btn-primary">
+                          <Plus size={16} /> Crear primer autor
+                        </button>
+                      )
+                    }
+                  />
+                </td>
+              </tr>
+            ) : (
+              autores.map(autor => (
+                <tr key={autor.id} className="table-row-hover group">
+                  <td className="px-6 py-4 font-medium text-gray-900">{autor.nombre}</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                      {isAdmin && (
+                        <>
+                          <button onClick={() => handleOpenEdit(autor)} className="btn-ghost p-2 rounded-lg" title="Editar">
+                            <Edit size={16} className="text-blue-600" />
+                          </button>
+                          <button onClick={() => handleDelete(autor)} className="btn-ghost p-2 rounded-lg" title="Eliminar">
+                            <Trash2 size={16} className="text-red-500" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+</tbody>
+        </table>
+      </div>
+
+      {/* Modal para crear/editar */}
+      <EntityModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleSubmit}
+        initialData={editingAutor}
+        entityType="autor"
+        loading={saving}
+      />
+    </div>
+  );
+};
 
   useEffect(() => {
     fetchAutores();

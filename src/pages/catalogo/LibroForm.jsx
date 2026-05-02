@@ -1,3 +1,23 @@
+/**
+ * LibroForm.jsx - Formulario para crear/editar libros
+ * 
+ * Este componente presenta un formulario completo para registrar o modificar
+ * libros en el catálogo. Solo los usuarios con rol de administrador pueden acceder.
+ * 
+ * El formulario incluye campos para:
+ * - Título (requerido)
+ * - ISBN
+ * - Descripción
+ * - Fecha de publicación
+ * - Autor (selección)
+ * - Editorial (selección)
+ * - Categoría (selección)
+ * - Disponibilidad para préstamo
+ * 
+ * @author Teca Biblioteca
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Save, Lock } from 'lucide-react';
@@ -7,13 +27,18 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { notify } from '../../utils/notify';
 
+/**
+ * Componente de formulario para crear o editar un libro
+ * @returns {JSX.Element} Formulario de libro
+ */
 export const LibroForm = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const isEditing = Boolean(id);
+  const { id } = useParams();                   // ID del libro (si es edición)
+  const navigate = useNavigate();              // Navegación
+  const isEditing = Boolean(id);               // Modo edición vs creación
   const { user } = useAuth();
   const isAdmin = user?.rol === 'admin';
 
+  // Estado del formulario
   const [formData, setFormData] = useState({
     titulo: '',
     isbn: '',
@@ -25,15 +50,21 @@ export const LibroForm = () => {
     disponible: true
   });
 
+  // Listas de opciones para selects
   const [autores, setAutores] = useState([]);
   const [editoriales, setEditoriales] = useState([]);
   const [categorias, setCategorias] = useState([]);
 
+  // Estados de carga y error
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(isEditing);
   const [error, setError] = useState(null);
 
+  /**
+   * Effect para cargar las relaciones y datos del libro (si es edición)
+   */
   useEffect(() => {
+    // Cargar autores, editoriales y categorías
     const fetchRelations = async () => {
       try {
         const [autoresRes, edRes, catRes] = await Promise.all([
@@ -52,6 +83,7 @@ export const LibroForm = () => {
 
     fetchRelations();
 
+    // Si es modo edición, cargar datos del libro
     if (isEditing) {
       const fetchLibro = async () => {
         try {
@@ -82,6 +114,9 @@ export const LibroForm = () => {
     }
   }, [id, isEditing]);
 
+  /**
+   * Maneja cambios en los campos del formulario
+   */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -90,12 +125,16 @@ export const LibroForm = () => {
     }));
   };
 
+  /**
+   * Maneja el envío del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
+      // Convertir IDs a números
       const dataToSend = {
         ...formData,
         autor_id: formData.autor_id ? Number(formData.autor_id) : null,
@@ -120,10 +159,12 @@ export const LibroForm = () => {
     }
   };
 
+  // Mostrar spinner mientras carga
   if (pageLoading) {
     return <LoadingSpinner variant="page" text="Cargando datos del libro..." />;
   }
 
+  // Verificar permisos de administrador
   if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
@@ -143,6 +184,7 @@ export const LibroForm = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      {/* Header */}
       <div className="flex items-center gap-4">
         <Link
           to="/catalogo"
@@ -166,6 +208,7 @@ export const LibroForm = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Título */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Título *</label>
                 <input
@@ -179,6 +222,7 @@ export const LibroForm = () => {
                 />
               </div>
 
+              {/* ISBN */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">ISBN</label>
                 <input
@@ -191,6 +235,7 @@ export const LibroForm = () => {
                 />
               </div>
 
+              {/* Descripción */}
               <div className="space-y-1.5 md:col-span-2">
                 <label className="text-sm font-medium text-gray-700">Descripción</label>
                 <textarea
@@ -203,6 +248,7 @@ export const LibroForm = () => {
                 />
               </div>
 
+              {/* Autor */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Autor</label>
                 <select
@@ -218,6 +264,7 @@ export const LibroForm = () => {
                 </select>
               </div>
 
+              {/* Editorial */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Editorial</label>
                 <select
@@ -233,6 +280,7 @@ export const LibroForm = () => {
                 </select>
               </div>
 
+              {/* Categoría */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Categoría</label>
                 <select
@@ -248,6 +296,7 @@ export const LibroForm = () => {
                 </select>
               </div>
 
+              {/* Fecha de publicación */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">Fecha Publicación</label>
                 <input
@@ -259,6 +308,7 @@ export const LibroForm = () => {
                 />
               </div>
               
+              {/* Disponibilidad */}
               <div className="md:col-span-2 flex items-center gap-3 pt-2">
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
@@ -276,6 +326,7 @@ export const LibroForm = () => {
               </div>
             </div>
 
+            {/* Botones de acción */}
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
               <button
                 type="button"
