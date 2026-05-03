@@ -24,6 +24,20 @@ import { X, BookOpen, Tag, Users, Building2, Calendar, FileText, CheckCircle, XC
 export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
   if (!isOpen || !libro) return null;
 
+  const getFechaPublicacion = () => {
+    if (libro.fecha_publicacion) return libro.fecha_publicacion;
+    const fechas = JSON.parse(localStorage.getItem('fechas_publicacion') || '{}');
+    return fechas[libro.titulo] || null;
+  };
+
+  const formatFecha = (fecha) => {
+    if (!fecha) return 'No especificada';
+    const fechaStr = fecha.includes('T') ? fecha.split('T')[0] : fecha;
+    return new Date(fechaStr).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  const fechaPublicacion = getFechaPublicacion();
+
   /**
    * Cierra el modal al hacer click en el backdrop
    */
@@ -108,9 +122,7 @@ export const LibroDetalleModal = ({ isOpen, onClose, libro, loading }) => {
                   <DetailItem
                     icon={Calendar}
                     label="Fecha de Publicación"
-                    value={libro.fecha_publicacion 
-                      ? new Date(libro.fecha_publicacion).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
-                      : 'No especificada'}
+                    value={formatFecha(fechaPublicacion)}
                   />
                 </div>
 

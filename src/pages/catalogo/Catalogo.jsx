@@ -140,6 +140,7 @@ export const Catalogo = () => {
       setLibroDetalle(prev => ({
         ...prev,
         ...libroData,
+        fecha_publicacion: libro.fecha_publicacion || libroData?.fecha_publicacion || null,
         autor_nombre: libroData.autor || 'No especificado',
         editorial_nombre: libroData.editorial || 'No especificado',
         categoria_nombre: libroData.categoria || 'No especificado'

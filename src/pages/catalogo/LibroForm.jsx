@@ -148,6 +148,15 @@ export const LibroForm = () => {
       } else {
         await catalogoService.createLibro(dataToSend);
         notify.success('Libro creado exitosamente');
+        
+        const libroTemporal = {
+          id: Date.now(),
+          titulo: formData.titulo,
+          fecha_publicacion: formData.fecha_publicacion || null
+        };
+        const fechasTemporal = JSON.parse(localStorage.getItem('fechas_publicacion') || '{}');
+        fechasTemporal[formData.titulo] = formData.fecha_publicacion;
+        localStorage.setItem('fechas_publicacion', JSON.stringify(fechasTemporal));
       }
       navigate('/catalogo');
     } catch (err) {
