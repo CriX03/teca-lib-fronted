@@ -22,6 +22,7 @@ import './index.css';
 import { AppRouter } from './routes/AppRouter';
 import { AuthProvider } from './context/AuthContext';
 import { ConfirmProvider } from './components/ui/ConfirmDialog';
+import { ThemeProvider } from './context/ThemeContext';
 
 /**
  * Monta la aplicación React en el elemento con id="root" del HTML
@@ -29,20 +30,22 @@ import { ConfirmProvider } from './components/ui/ConfirmDialog';
  */
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <ConfirmProvider>
-        <AppRouter />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-          }}
-          containerStyle={{
-            top: 20,
-            right: 20,
-          }}
-        />
-      </ConfirmProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ConfirmProvider>
+          <AppRouter />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+            }}
+            containerStyle={{
+              top: 20,
+              right: 20,
+            }}
+          />
+        </ConfirmProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>
 );

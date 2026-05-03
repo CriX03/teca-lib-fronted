@@ -158,8 +158,8 @@ export const Catalogo = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <BookOpen className="text-primary-600" />
+        <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+          <BookOpen className="text-primary-500" />
           Catálogo de Libros
         </h1>
         
@@ -185,9 +185,9 @@ export const Catalogo = () => {
       </div>
 
       {/* Filtros */}
-      <div className="card p-4 flex flex-col sm:flex-row gap-3">
+      <div className="glass-card rounded-xl p-4 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={18} />
           <input
             type="text"
             placeholder="Buscar por título..."
@@ -215,14 +215,14 @@ export const Catalogo = () => {
       </div>
 
       {/* Contenido */}
-      <div className="card">
+      <div className="glass-card rounded-xl overflow-hidden">
         {error && (
           <ErrorMessage message={error} onRetry={fetchLibros} />
         )}
         
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50/80 text-xs uppercase text-gray-500 border-b border-gray-100">
+            <thead className="bg-[var(--bg-base)]/50 text-xs uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
               <tr>
                 <th className="px-6 py-3.5 font-semibold">Título</th>
                 <th className="px-6 py-3.5 font-semibold hidden sm:table-cell">ISBN</th>
@@ -230,7 +230,7 @@ export const Catalogo = () => {
                 <th className="px-6 py-3.5 font-semibold text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-[var(--border-color)]">
               {loading ? (
                 <tr>
                   <td colSpan="4" className="p-0">
@@ -258,12 +258,12 @@ export const Catalogo = () => {
                 </tr>
               ) : (
                 libros.map((libro) => (
-                  <tr key={libro.id} className="table-row-hover group">
+                  <tr key={libro.id} className="table-row-hover">
                     <td className="px-6 py-4">
-                      <span className="font-medium text-gray-900">{libro.titulo}</span>
+                      <span className="font-semibold text-[var(--text-primary)]">{libro.titulo}</span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500 hidden sm:table-cell">
-                      <code className="text-xs bg-gray-100 px-2 py-0.5 rounded">{libro.isbn || '—'}</code>
+                    <td className="px-6 py-4 text-[var(--text-muted)] hidden sm:table-cell">
+                      <code className="text-xs bg-[var(--primary-light)] px-2 py-0.5 rounded">{libro.isbn || '—'}</code>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`badge ${libro.disponible !== false && libro.disponibilidad !== false ? 'badge-success' : 'badge-warning'}`}>
@@ -271,13 +271,13 @@ export const Catalogo = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleVerDetalle(libro)}
-                          className="btn-ghost p-2 rounded-lg"
+                          className="btn-ghost p-2.5 rounded-xl"
                           title="Ver detalles"
                         >
-                          <Info size={16} className="text-gray-600" />
+                          <Info size={16} className="text-[var(--text-muted)]" />
                         </button>
                         {libro.disponible !== false && libro.disponibilidad !== false && (
                           <button
@@ -285,10 +285,10 @@ export const Catalogo = () => {
                               setLibroSeleccionado(libro);
                               setIsPrestamoModalOpen(true);
                             }}
-                            className="btn-ghost p-2 rounded-lg"
+                            className="btn-ghost p-2.5 rounded-xl"
                             title="Solicitar préstamo"
                           >
-                            <BookOpen size={16} className="text-emerald-600" />
+                            <BookOpen size={16} className="text-emerald-500" />
                           </button>
                         )}
                         {isAdmin && (
@@ -298,14 +298,14 @@ export const Catalogo = () => {
                                 setLibroEditando(libro);
                                 setIsEditModalOpen(true);
                               }}
-                              className="btn-ghost p-2 rounded-lg"
+                              className="btn-ghost p-2.5 rounded-xl"
                               title="Editar"
                             >
-                              <Edit size={16} className="text-blue-600" />
+                              <Edit size={16} className="text-blue-500" />
                             </button>
                             <button
                               onClick={() => handleDelete(libro)}
-                              className="btn-ghost p-2 rounded-lg"
+                              className="btn-ghost p-2.5 rounded-xl"
                               title="Eliminar"
                             >
                               <Trash2 size={16} className="text-red-500" />
@@ -323,7 +323,7 @@ export const Catalogo = () => {
 
         {/* Paginación */}
         {!loading && totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
+          <div className="px-6 py-4 border-t border-[var(--border-color)] flex items-center justify-between bg-[var(--bg-base)]/50">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => Math.max(1, p - 1))}
@@ -344,10 +344,10 @@ export const Catalogo = () => {
                   <button
                     key={pageNum}
                     onClick={() => setPage(pageNum)}
-                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                    className={`w-9 h-9 rounded-lg text-sm font-semibold transition-all ${
                       pageNum === page
-                        ? 'bg-primary-600 text-white shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-primary-500 text-white'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--primary-light)]'
                     }`}
                   >
                     {pageNum}

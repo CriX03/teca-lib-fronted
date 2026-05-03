@@ -1,38 +1,19 @@
-/**
- * Login.jsx - Página de inicio de sesión
- * 
- * Este componente renderiza el formulario de inicio de sesión donde los
- * usuarios registrados pueden autenticarse para acceder al sistema.
- * Valida las credenciales y maneja los estados de error y carga.
- * 
- * @author Teca Biblioteca
- * @version 1.0.0
- */
-
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogIn, Eye, EyeOff } from 'lucide-react';
+import { LogIn, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { notify } from '../utils/notify';
 
-/**
- * Componente de formulario de inicio de sesión
- * @returns {JSX.Element} Formulario de login
- */
 export const Login = () => {
-  const [email, setEmail] = useState('');              // Email del usuario
-  const [password, setPassword] = useState('');       // Contraseña del usuario
-  const [showPassword, setShowPassword] = useState(false); // Mostrar/ocultar contraseña
-  const [error, setError] = useState('');             // Mensaje de error
-  const [isLoading, setIsLoading] = useState(false);  // Estado de carga
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();                         // Función de login del contexto
-  const navigate = useNavigate();                      // Navegación programática
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  /**
-   * Maneja el envío del formulario de login
-   * @param {React.FormEvent} e - Evento del formulario
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -55,19 +36,17 @@ export const Login = () => {
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
-      {/* Mensaje de error */}
       {error && (
-        <div className="flex items-start gap-3 rounded-lg bg-red-50 p-3.5 border border-red-100 animate-slide-down">
-          <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-red-600 text-xs font-bold">!</span>
+        <div className="flex items-start gap-3 rounded-xl bg-red-500/10 p-4 border border-red-500/20 animate-slide-down">
+          <div className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-red-500 text-xs font-bold">!</span>
           </div>
-          <p className="text-sm text-red-700 font-medium">{error}</p>
+          <p className="text-sm text-red-400 font-medium">{error}</p>
         </div>
       )}
 
-      {/* Campo de email */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="login-email">
+        <label className="block text-sm font-semibold mb-2" htmlFor="login-email">
           Correo electrónico
         </label>
         <input
@@ -78,12 +57,12 @@ export const Login = () => {
           className="input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
         />
       </div>
 
-      {/* Campo de contraseña con toggle de visibilidad */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="login-password">
+        <label className="block text-sm font-semibold mb-2" htmlFor="login-password">
           Contraseña
         </label>
         <div className="relative">
@@ -92,14 +71,15 @@ export const Login = () => {
             type={showPassword ? 'text' : 'password'}
             required
             placeholder="••••••••"
-            className="input pr-10"
+            className="input pr-12"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors rounded-lg hover:bg-[var(--primary-light)]"
             tabIndex={-1}
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -107,18 +87,14 @@ export const Login = () => {
         </div>
       </div>
 
-      {/* Botón deSubmit */}
       <button
         type="submit"
         disabled={isLoading}
-        className="btn btn-primary w-full py-2.5"
+        className="btn btn-primary w-full py-3"
       >
         {isLoading ? (
           <span className="flex items-center gap-2">
-            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
+            <Loader2 size={18} className="animate-spin" />
             Iniciando sesión...
           </span>
         ) : (
@@ -129,10 +105,9 @@ export const Login = () => {
         )}
       </button>
 
-      {/* Enlace a registro */}
-      <div className="text-center text-sm text-gray-500 pt-2">
+      <div className="text-center text-[var(--text-secondary)] pt-2">
         ¿No tienes cuenta?{' '}
-        <Link to="/registro" className="text-primary-600 hover:text-primary-500 font-semibold transition-colors">
+        <Link to="/registro" className="text-primary-500 hover:text-primary-400 font-semibold transition-colors">
           Regístrate
         </Link>
       </div>

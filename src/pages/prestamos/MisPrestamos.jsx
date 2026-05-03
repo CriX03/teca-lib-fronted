@@ -151,11 +151,11 @@ export const MisPrestamos = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <BookOpen className="text-primary-600" />
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+            <BookOpen className="text-primary-500" />
             Mis Préstamos
           </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] mt-0.5">
             {!loading && `${activos.length} activo(s) · ${devueltos.length} devuelto(s)`}
           </p>
         </div>
@@ -164,18 +164,16 @@ export const MisPrestamos = () => {
       {error && <ErrorMessage message={error} onRetry={fetchPrestamos} />}
 
       {/* Préstamos Activos */}
-      <div className="card">
-        <div className="card-header">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-amber-400" />
-            <h2 className="text-sm font-semibold text-gray-900">Préstamos Activos</h2>
-          </div>
-          {!loading && <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{activos.length}</span>}
+      <div className="glass-card rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-[var(--border-color)] flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+          <h2 className="text-sm font-semibold text-[var(--text-primary)]">Préstamos Activos</h2>
+          {!loading && <span className="text-xs text-[var(--text-muted)] bg-[var(--primary-light)] px-2 py-0.5 rounded-full">{activos.length}</span>}
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50/80 text-xs uppercase text-gray-500 border-b border-gray-100">
+            <thead className="bg-[var(--bg-base)]/50 text-xs uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
               <tr>
                 <th className="px-6 py-3.5 font-semibold">Libro</th>
                 <th className="px-6 py-3.5 font-semibold hidden sm:table-cell">F. Préstamo</th>
@@ -184,7 +182,7 @@ export const MisPrestamos = () => {
                 {isAdmin && <th className="px-6 py-3.5 font-semibold text-right">Acciones</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-[var(--border-color)]">
               {loading ? (
                 <tr>
                   <td colSpan={isAdmin ? 5 : 4} className="p-0">
@@ -209,17 +207,17 @@ export const MisPrestamos = () => {
                   return (
                     <tr key={prestamo.id} className="table-row-hover">
                       <td className="px-6 py-4">
-                        <span className="font-medium text-gray-900">{titulo}</span>
+                        <span className="font-semibold text-[var(--text-primary)]">{titulo}</span>
                       </td>
                       <td className="px-6 py-4 hidden sm:table-cell">
-                        <div className="flex items-center gap-1.5 text-gray-500">
-                          <Calendar size={14} className="text-gray-400" />
+                        <div className="flex items-center gap-1.5 text-[var(--text-muted)]">
+                          <Calendar size={14} />
                           {formatDate(prestamo.fecha_prestamo)}
                         </div>
                       </td>
                       <td className="px-6 py-4 hidden sm:table-cell">
-                        <div className={`flex items-center gap-1.5 ${overdue ? 'text-red-600' : 'text-gray-500'}`}>
-                          {overdue ? <AlertTriangle size={14} /> : <Calendar size={14} className="text-gray-400" />}
+                        <div className={`flex items-center gap-1.5 ${overdue ? 'text-red-500' : 'text-[var(--text-muted)]'}`}>
+                          {overdue ? <AlertTriangle size={14} /> : <Calendar size={14} />}
                           {formatDate(prestamo.fecha_limite)}
                         </div>
                       </td>
@@ -233,9 +231,8 @@ export const MisPrestamos = () => {
                           <button
                             onClick={() => handleDevolucion(prestamo)}
                             disabled={devolviendo === prestamo.id}
-                            className="btn btn-primary text-xs py-1.5 px-3"
+                            className="btn btn-primary text-xs py-2 px-4"
                           >
-                            <CheckCircle size={14} />
                             {devolviendo === prestamo.id ? 'Procesando...' : 'Devolver'}
                           </button>
                         </td>
@@ -251,18 +248,16 @@ export const MisPrestamos = () => {
 
       {/* Historial de devueltos */}
       {!loading && devueltos.length > 0 && (
-        <div className="card">
-          <div className="card-header">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-400" />
-              <h2 className="text-sm font-semibold text-gray-900">Historial de Devoluciones</h2>
-            </div>
-            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{devueltos.length}</span>
+        <div className="glass-card rounded-xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-[var(--border-color)] flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Historial de Devoluciones</h2>
+            <span className="text-xs text-[var(--text-muted)] bg-[var(--primary-light)] px-2 py-0.5 rounded-full">{devueltos.length}</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50/80 text-xs uppercase text-gray-500 border-b border-gray-100">
+              <thead className="bg-[var(--bg-base)]/50 text-xs uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
                 <tr>
                   <th className="px-6 py-3.5 font-semibold">Libro</th>
                   <th className="px-6 py-3.5 font-semibold hidden sm:table-cell">F. Préstamo</th>
@@ -270,18 +265,18 @@ export const MisPrestamos = () => {
                   <th className="px-6 py-3.5 font-semibold">Estado</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-[var(--border-color)]">
                 {devueltos.map((prestamo) => {
                   const titulo = prestamo.titulo || `Libro #${prestamo.libro_id}`;
                   return (
                     <tr key={prestamo.id} className="table-row-hover">
                       <td className="px-6 py-4">
-                        <span className="font-medium text-gray-900">{titulo}</span>
+                        <span className="font-semibold text-[var(--text-primary)]">{titulo}</span>
                       </td>
-                      <td className="px-6 py-4 hidden sm:table-cell text-gray-500">
+                      <td className="px-6 py-4 hidden sm:table-cell text-[var(--text-muted)]">
                         {formatDate(prestamo.fecha_prestamo)}
                       </td>
-                      <td className="px-6 py-4 hidden sm:table-cell text-gray-500">
+                      <td className="px-6 py-4 hidden sm:table-cell text-[var(--text-muted)]">
                         {formatDate(prestamo.fecha_devolucion || prestamo.fecha_limite)}
                       </td>
                       <td className="px-6 py-4">
