@@ -16,9 +16,9 @@ import { X, Tag, Users, Building2 } from 'lucide-react';
  * Configuración de iconos y etiquetas por tipo de entidad
  */
 const iconMap = {
-  categoria: { icon: Tag, label: 'Categoría', color: 'bg-purple-100', iconColor: 'text-purple-600' },
-  autor: { icon: Users, label: 'Autor', color: 'bg-blue-100', iconColor: 'text-blue-600' },
-  editorial: { icon: Building2, label: 'Editorial', color: 'bg-emerald-100', iconColor: 'text-emerald-600' },
+  categoria: { icon: Tag, label: 'Categoría', color: 'bg-purple-100 dark:bg-purple-900/40', iconColor: 'text-purple-600 dark:text-purple-400' },
+  autor: { icon: Users, label: 'Autor', color: 'bg-blue-100 dark:bg-blue-900/40', iconColor: 'text-blue-600 dark:text-blue-400' },
+  editorial: { icon: Building2, label: 'Editorial', color: 'bg-emerald-100 dark:bg-emerald-900/40', iconColor: 'text-emerald-600 dark:text-emerald-400' },
 };
 
 /**
@@ -97,31 +97,31 @@ export const EntityModal = ({ isOpen, onClose, onSubmit, initialData, entityType
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
-        <div className="flex justify-between items-center p-5 border-b border-gray-100">
+      <div className="relative bg-[var(--bg-surface)] dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
+        <div className="flex justify-between items-center p-5 border-b border-[var(--border-color)]">
           <div className="flex items-center gap-2.5">
             <div className={`w-9 h-9 rounded-xl ${config.color} flex items-center justify-center`}>
               <IconComp size={18} className={config.iconColor} />
             </div>
-            <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+            <h2 className="text-base font-semibold text-[var(--text-primary)]">{title}</h2>
           </div>
-          <button onClick={onClose} className="btn-ghost p-2 rounded-lg text-gray-400 hover:text-gray-600" disabled={loading}>
+          <button onClick={onClose} className="btn-ghost p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)]" disabled={loading}>
             <X size={18} />
           </button>
         </div>
         
         <form onSubmit={handleSubmit} className="p-5 space-y-5">
           {error && (
-            <div className="flex items-start gap-3 rounded-lg bg-red-50 p-3.5 border border-red-100 animate-slide-down">
-              <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-red-600 text-xs font-bold">!</span>
+            <div className="flex items-start gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-3.5 border border-red-100 dark:border-red-800 animate-slide-down">
+              <div className="w-5 h-5 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-red-600 dark:text-red-400 text-xs font-bold">!</span>
               </div>
-              <p className="text-sm text-red-700 font-medium">{error}</p>
+              <p className="text-sm text-red-700 dark:text-red-300 font-medium">{error}</p>
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Nombre de {config.label.toLowerCase()}
             </label>
             <input
