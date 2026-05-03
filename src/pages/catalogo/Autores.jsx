@@ -112,11 +112,11 @@ export const Autores = () => {
             <ArrowLeft size={20} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
               <Users size={22} className="text-primary-600" />
               Autores
             </h1>
-            <p className="text-sm text-gray-500 mt-0.5">Gestiona los autores del catálogo</p>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">Gestiona los autores del catálogo</p>
           </div>
         </div>
         {isAdmin && (
@@ -129,13 +129,13 @@ export const Autores = () => {
       <div className="card">
         {error && <ErrorMessage message={error} onRetry={fetchAutores} />}
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50/80 text-xs uppercase text-gray-500 border-b border-gray-100">
+          <thead className="bg-[var(--bg-base)]/50 text-xs uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
             <tr>
               <th className="px-6 py-3.5 font-semibold">Nombre</th>
               <th className="px-6 py-3.5 font-semibold text-right">Acciones</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-[var(--border-color)]">
             {loading ? (
               <tr>
                 <td colSpan="2" className="p-0">
@@ -162,7 +162,7 @@ export const Autores = () => {
             ) : (
               autores.map(autor => (
                 <tr key={autor.id} className="table-row-hover group">
-                  <td className="px-6 py-4 font-medium text-gray-900">{autor.nombre}</td>
+                  <td className="px-6 py-4 font-medium text-[var(--text-primary)]">{autor.nombre}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                       {isAdmin && (

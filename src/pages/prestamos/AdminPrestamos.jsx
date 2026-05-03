@@ -167,11 +167,11 @@ export const AdminPrestamos = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
             <Users className="text-primary-600" />
             Todos los Préstamos
           </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] mt-0.5">
             {totalItems > 0 && `${totalItems} préstamo(s) en total`}
           </p>
         </div>
@@ -182,7 +182,7 @@ export const AdminPrestamos = () => {
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
           {/* Filtro por estado */}
           <div className="flex-1">
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Estado</label>
+            <label className="block text-xs font-medium text-[var(--text-muted)] mb-1.5">Estado</label>
             <select
               value={estadoFilter}
               onChange={(e) => { setEstadoFilter(e.target.value); setPage(1); }}
@@ -196,7 +196,7 @@ export const AdminPrestamos = () => {
 
           {/* Búsqueda por título */}
           <div className="flex-1">
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Buscar por libro</label>
+            <label className="block text-xs font-medium text-[var(--text-muted)] mb-1.5">Buscar por libro</label>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -213,7 +213,7 @@ export const AdminPrestamos = () => {
 
           {/* Items por página */}
           <div className="w-32">
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Por página</label>
+            <label className="block text-xs font-medium text-[var(--text-muted)] mb-1.5">Por página</label>
             <select
               value={limit}
               onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
@@ -230,7 +230,7 @@ export const AdminPrestamos = () => {
             <button
               type="button"
               onClick={clearFilters}
-              className="btn btn-ghost self-end px-3 py-2 text-sm text-gray-500 hover:text-gray-700"
+              className="btn btn-ghost self-end px-3 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             >
               Limpiar filtros
             </button>
@@ -273,7 +273,7 @@ export const AdminPrestamos = () => {
       <div className="card">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50/80 text-xs uppercase text-gray-500 border-b border-gray-100">
+            <thead className="bg-[var(--bg-base)]/50 text-xs uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
               <tr>
                 <th className="px-6 py-3.5 font-semibold">Libro</th>
                 <th className="px-6 py-3.5 font-semibold">Usuario</th>
@@ -283,7 +283,7 @@ export const AdminPrestamos = () => {
                 <th className="px-6 py-3.5 font-semibold text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-[var(--border-color)]">
               {loading ? (
                 <tr>
                   <td colSpan="6" className="p-0">
@@ -315,30 +315,30 @@ export const AdminPrestamos = () => {
                     <tr key={prestamo.id} className="table-row-hover">
                       <td className="px-6 py-4">
                         <div>
-                          <span className="font-medium text-gray-900">{prestamo.libro_titulo}</span>
-                          <div className="text-xs text-gray-400 mt-0.5">
+                          <span className="font-medium text-[var(--text-primary)]">{prestamo.libro_titulo}</span>
+                          <div className="text-xs text-[var(--text-muted)] mt-0.5">
                             {prestamo.libro_categoria}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-1.5 text-gray-700">
-                          <Users size={14} className="text-gray-400" />
+                        <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
+                          <Users size={14} className="text-[var(--text-muted)]" />
                           <span className="font-medium">{prestamo.usuario_nombre}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 hidden lg:table-cell">
-                        <div className="flex items-center gap-1.5 text-gray-500">
-                          <Calendar size={14} className="text-gray-400" />
+                        <div className="flex items-center gap-1.5 text-[var(--text-muted)]">
+                          <Calendar size={14} className="text-[var(--text-muted)]" />
                           {formatDate(prestamo.fecha_prestamo)}
                         </div>
                       </td>
                       <td className="px-6 py-4 hidden lg:table-cell">
-                        <div className={`flex items-center gap-1.5 ${overdue ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
+                        <div className={`flex items-center gap-1.5 ${overdue ? 'text-red-400 font-medium' : 'text-[var(--text-muted)]'}`}>
                           {overdue ? (
                             <AlertTriangle size={14} />
                           ) : (
-                            <Calendar size={14} className="text-gray-400" />
+                            <Calendar size={14} className="text-[var(--text-muted)]" />
                           )}
                           {formatDate(prestamo.fecha_limite)}
                         </div>
@@ -374,8 +374,8 @@ export const AdminPrestamos = () => {
 
         {/* Paginación */}
         {!loading && totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--border-color)]">
+            <p className="text-sm text-[var(--text-muted)]">
               Mostrando {prestamos.length} de {totalItems} préstamos
             </p>
             <div className="flex items-center gap-1">
@@ -387,7 +387,7 @@ export const AdminPrestamos = () => {
               >
                 <ChevronLeft size={18} />
               </button>
-              <span className="text-sm font-medium text-gray-700 px-3">
+              <span className="text-sm font-medium text-[var(--text-secondary)] px-3">
                 {page} / {totalPages}
               </span>
               <button
