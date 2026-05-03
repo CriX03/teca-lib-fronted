@@ -18,26 +18,26 @@ export const AuthLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-mesh transition-all duration-500">
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 -left-4 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-primary-400/8 rounded-full blur-2xl animate-pulse-glow" />
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden dark:bg-slate-900">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950">
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-primary-500/20 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-500/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-primary-400/10 rounded-full blur-2xl animate-pulse-glow" />
         </div>
         
-        <div className="relative z-10 flex flex-col justify-center items-start px-12 xl:px-20 text-white">
+        <div className="relative z-10 flex flex-col justify-center items-start px-12 xl:px-20">
           <div className="flex items-center gap-3 mb-10">
-            <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
-              <Library size={32} className="text-white" />
+            <div className="w-14 h-14 rounded-2xl bg-white/20 dark:bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/30 dark:border-white/20">
+              <Library size={32} className="text-white dark:text-primary-200" />
             </div>
-            <span className="text-3xl font-bold tracking-tight">Teca Biblioteca</span>
+            <span className="text-3xl font-bold tracking-tight text-white dark:text-white">Teca Biblioteca</span>
           </div>
           
-          <h1 className="text-5xl font-bold leading-tight mb-5">
+          <h1 className="text-5xl font-bold leading-tight mb-5 text-white dark:text-white">
             Gestiona tu biblioteca<br />
-            <span className="text-primary-300">de forma inteligente</span>
+            <span className="text-primary-300 dark:text-primary-200">de forma inteligente</span>
           </h1>
-          <p className="text-primary-100/80 text-xl max-w-lg leading-relaxed">
+          <p className="text-primary-100 dark:text-primary-100/80 text-xl max-w-lg leading-relaxed">
             Administra catálogos, préstamos y usuarios desde una plataforma centralizada y fácil de usar.
           </p>
 
@@ -47,13 +47,13 @@ export const AuthLayout = () => {
               'Gestión de préstamos en tiempo real',
               'Reportes y estadísticas',
             ].map((feature, i) => (
-              <div key={i} className="flex items-center gap-4 text-primary-100/80">
-                <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0 border border-white/20">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div key={i} className="flex items-center gap-4 text-primary-100 dark:text-primary-100/80">
+                <div className="w-7 h-7 rounded-full bg-white/20 dark:bg-white/15 flex items-center justify-center flex-shrink-0 border border-white/30 dark:border-white/20">
+                  <svg className="w-4 h-4 text-white dark:text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="text-lg font-medium">{feature}</span>
+                <span className="text-lg font-medium text-white dark:text-primary-100">{feature}</span>
               </div>
             ))}
           </div>
@@ -79,7 +79,7 @@ export const AuthLayout = () => {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg shadow-primary-500/25">
                 <Library size={26} className="text-white" />
               </div>
-              <span className="text-2xl font-bold text-white">Teca Biblioteca</span>
+              <span className="text-2xl font-bold text-slate-800 dark:text-white">Teca Biblioteca</span>
             </div>
           </div>
 
