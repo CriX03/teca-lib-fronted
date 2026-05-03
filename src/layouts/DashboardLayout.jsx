@@ -142,7 +142,9 @@ export const DashboardLayout = () => {
             
             <div className="hidden lg:flex items-center gap-3">
               {user?.rol === 'admin' && (
-                <span className="badge badge-info">Admin</span>
+                <span className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-primary-500/20 to-accent-500/20 text-primary-500 text-xs font-bold border border-primary-500/30">
+                  Admin
+                </span>
               )}
               <span className="text-sm font-semibold text-[var(--text-primary)]">
                 {user?.nombre || 'Usuario'}

@@ -177,11 +177,11 @@ export const LibroForm = () => {
   if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
-          <Lock size={32} className="text-red-600" />
+        <div className="w-20 h-20 rounded-2xl bg-red-500/10 flex items-center justify-center mb-5">
+          <Lock size={36} className="text-red-500" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Acceso Denegado</h1>
-        <p className="text-gray-600 max-w-md mb-6">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Acceso Denegado</h1>
+        <p className="text-[var(--text-muted)] max-w-md mb-6">
           No tienes permisos para acceder a esta sección. Solo los administradores pueden gestionar libros.
         </p>
         <button onClick={() => navigate('/catalogo')} className="btn btn-primary">
@@ -197,29 +197,29 @@ export const LibroForm = () => {
       <div className="flex items-center gap-4">
         <Link
           to="/catalogo"
-          className="btn-ghost p-2 rounded-lg transition-colors"
+          className="btn-ghost p-2.5 rounded-xl transition-colors"
         >
           <ArrowLeft size={20} />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Editar Libro' : 'Nuevo Libro'}
           </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] mt-0.5">
             {isEditing ? 'Modifica los datos del libro' : 'Completa el formulario para registrar un libro'}
           </p>
         </div>
       </div>
 
-      <div className="card">
+      <div className="glass-card rounded-xl">
         <div className="card-body">
           {error && <ErrorMessage message={error} />}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Título */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Título *</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[var(--text-primary)]">Título *</label>
                 <input
                   type="text"
                   name="titulo"
@@ -232,8 +232,8 @@ export const LibroForm = () => {
               </div>
 
               {/* ISBN */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">ISBN</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[var(--text-primary)]">ISBN</label>
                 <input
                   type="text"
                   name="isbn"
@@ -245,8 +245,8 @@ export const LibroForm = () => {
               </div>
 
               {/* Descripción */}
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-sm font-medium text-gray-700">Descripción</label>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-semibold text-[var(--text-primary)]">Descripción</label>
                 <textarea
                   name="descripcion"
                   rows="3"
@@ -258,8 +258,8 @@ export const LibroForm = () => {
               </div>
 
               {/* Autor */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Autor</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[var(--text-primary)]">Autor</label>
                 <select
                   name="autor_id"
                   value={formData.autor_id}
@@ -274,8 +274,8 @@ export const LibroForm = () => {
               </div>
 
               {/* Editorial */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Editorial</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[var(--text-primary)]">Editorial</label>
                 <select
                   name="editorial_id"
                   value={formData.editorial_id}
@@ -290,8 +290,8 @@ export const LibroForm = () => {
               </div>
 
               {/* Categoría */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Categoría</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[var(--text-primary)]">Categoría</label>
                 <select
                   name="categoria_id"
                   value={formData.categoria_id}
@@ -306,15 +306,17 @@ export const LibroForm = () => {
               </div>
 
               {/* Fecha de publicación */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Fecha Publicación</label>
-                <input
-                  type="date"
-                  name="fecha_publicacion"
-                  value={formData.fecha_publicacion}
-                  onChange={handleChange}
-                  className="input"
-                />
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[var(--text-primary)]">Fecha Publicación</label>
+                <div className="relative">
+                  <input
+                    type="date"
+                    name="fecha_publicacion"
+                    value={formData.fecha_publicacion}
+                    onChange={handleChange}
+                    className="input"
+                  />
+                </div>
               </div>
               
               {/* Disponibilidad */}
@@ -327,16 +329,16 @@ export const LibroForm = () => {
                     onChange={handleChange}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                  <div className="w-12 h-6 bg-[var(--border-color)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                 </label>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-semibold text-[var(--text-primary)]">
                   Disponible para préstamo
                 </span>
               </div>
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-color)]">
               <button
                 type="button"
                 onClick={() => navigate('/catalogo')}
