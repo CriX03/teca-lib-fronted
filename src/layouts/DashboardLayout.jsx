@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Book, LayoutDashboard, LogOut, FileText, Bookmark, Menu, X, ChevronRight, Library, Users } from 'lucide-react';
+import { NotificationBell } from '../components/ui/NotificationBell';
 
 /**
  * Layout del dashboard con sidebar y header
@@ -172,6 +173,7 @@ export const DashboardLayout = () => {
             
             {/* Info de usuario desktop */}
             <div className="hidden lg:flex items-center gap-3">
+              <NotificationBell />
               {user?.rol === 'admin' && (
                 <span className="badge badge-info">Admin</span>
               )}

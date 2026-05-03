@@ -76,4 +76,5 @@ const createInstance = (baseURL) => {
 export const apiUsers = createInstance(import.meta.env.VITE_API_USERS_URL);     // Servicio de autenticación y usuarios
 export const apiCatalog = createInstance(import.meta.env.VITE_API_CATALOG_URL); // Servicio de catálogo de libros
 export const apiLoans = createInstance(import.meta.env.VITE_API_LOANS_URL);     // Servicio de préstamos
+export const apiNotifications = createInstance(import.meta.env.VITE_API_NOTIFICATIONS_URL); // Servicio de notificaciones
 export const apiReports = createInstance(import.meta.env.VITE_API_REPORTS_URL); // Servicio de reportes
