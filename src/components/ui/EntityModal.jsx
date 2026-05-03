@@ -97,7 +97,7 @@ export const EntityModal = ({ isOpen, onClose, onSubmit, initialData, entityType
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       
       {/* Modal */}
-      <div className="relative bg-[var(--bg-surface)] dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
+      <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
         <div className="flex justify-between items-center p-5 border-b border-[var(--border-color)]">
           <div className="flex items-center gap-2.5">
             <div className={`w-9 h-9 rounded-xl ${config.color} flex items-center justify-center`}>
