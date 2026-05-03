@@ -26,6 +26,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { useAuth } from '../../hooks/useAuth';
 import { PrestamoModal } from '../../components/prestamos/PrestamoModal';
 import { LibroDetalleModal } from '../../components/ui/LibroDetalleModal';
+import { LibroEditModal } from '../../components/ui/LibroEditModal';
 import { TableSkeleton, EmptyState, ErrorMessage } from '../../components/ui';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { notify } from '../../utils/notify';
@@ -54,6 +55,10 @@ export const Catalogo = () => {
   const [isDetalleModalOpen, setIsDetalleModalOpen] = useState(false);
   const [libroDetalle, setLibroDetalle] = useState(null);
   const [loadingDetalle, setLoadingDetalle] = useState(false);
+  
+  // Estado del modal de edición
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [libroEditando, setLibroEditando] = useState(null);
   
   const { user } = useAuth();
   const isAdmin = user?.rol === 'admin';
@@ -288,7 +293,10 @@ export const Catalogo = () => {
                         {isAdmin && (
                           <>
                             <button
-                              onClick={() => navigate(`/catalogo/editar/${libro.id}`)}
+                              onClick={() => {
+                                setLibroEditando(libro);
+                                setIsEditModalOpen(true);
+                              }}
                               className="btn-ghost p-2 rounded-lg"
                               title="Editar"
                             >
@@ -381,6 +389,19 @@ export const Catalogo = () => {
         }}
         libro={libroDetalle}
         loading={loadingDetalle}
+      />
+
+      {/* Modal de edición */}
+      <LibroEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setLibroEditando(null);
+        }}
+        libro={libroEditando}
+        onSuccess={() => {
+          fetchLibros();
+        }}
       />
     </div>
   );
